@@ -1,6 +1,6 @@
 {
   "name": "@jcvalino/msys-reactjs-form",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A react form utilities used in Multisys",
   "scripts": {
     "rollup": "rollup -c"
