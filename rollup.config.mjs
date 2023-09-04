@@ -20,7 +20,7 @@ export default [
         sourcemap: true,
       },
     ],
-    external: ['react', 'zod'],
+    external: ['react'],
     plugins: [
       resolve(),
       commonjs(),
