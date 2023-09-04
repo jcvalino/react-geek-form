@@ -1,6 +1,6 @@
 {
-  "name": "@jcvalino/msys-reactjs-form",
-  "version": "0.0.2",
+  "name": "react-geek-form",
+  "version": "0.0.6",
   "description": "A react form utilities used in Multisys",
   "scripts": {
     "rollup": "rollup -c"
@@ -29,15 +29,13 @@
     "zod": "^3.22.2"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "zod": ">=3.22.2"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "files": [
     "dist"
   ],
-  "types": "dist/index.d.ts",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/jcvalino"
-  }
+  "types": "dist/index.d.ts"
 }
