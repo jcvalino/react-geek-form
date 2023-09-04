@@ -1,6 +1,6 @@
 {
   "name": "react-geek-form",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "An experimental react form utilities used in Multisys",
   "scripts": {
     "rollup": "rollup -c"
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/jcvalino/react-geek-form.git"
   },
   "author": "jcvalino",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jcvalino/react-geek-form/issues"
   },
@@ -37,5 +37,13 @@
   "files": [
     "dist"
   ],
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "react",
+    "form",
+    "forms",
+    "form-validation",
+    "validation",
+    "typescript"
+  ]
 }

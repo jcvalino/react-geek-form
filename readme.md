@@ -1,18 +1,33 @@
-![Logo](https://i.ibb.co/wc7CCJ1/Screenshot-2023-09-04-at-3-49-39-PM.png)
 
-# react-geek-form
+![Logo](https://i.ibb.co/xYxSmcG/Screenshot-2023-09-04-at-11-11-36-PM.png)
+
+
+<div align="center">
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Status WIP](https://img.shields.io/badge/Status-WIP-blue)]()
+
+</div>
+
+<p align="center">
+  <a href="#">Get started</a> | 
+  <a href="#">API</a> |
+  <a href="#">Examples</a> |
+  <a href="#">FAQs</a>
+</p>
 
 A set of form utilities built on top of [react-hook-form](https://www.npmjs.com/package/react-hook-form) and [zod](https://www.npmjs.com/package/zod).
 
-## Installation
+
+### Installation
 
 ```bash
   npm i react-geek-form zod
 ```
+    
+### Quickstart
 
-## Basic Usage
-
-```javascript
+```jsx
 import { z } from "zod;
 import { createForm } from 'react-geek-form'
 
@@ -34,13 +49,15 @@ const LoginForm = forwardContext((props, ctx) {
   )
 });
 ```
-
-## Used By
+### Used By
 
 This project is used by the following companies:
 
 - Multisys Technologies Corp.
 
-## Authors
+
+### Contributors
 
 - [@jcvalino](https://github.com/jcvalino)
+
+
