@@ -1,20 +1,20 @@
 {
   "name": "react-geek-form",
-  "version": "0.0.6",
-  "description": "A react form utilities used in Multisys",
+  "version": "0.0.7",
+  "description": "An experimental react form utilities used in Multisys",
   "scripts": {
     "rollup": "rollup -c"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jcvalino/msys-reactjs-form.git"
+    "url": "git+https://github.com/jcvalino/react-geek-form.git"
   },
   "author": "jcvalino",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jcvalino/msys-reactjs-form/issues"
+    "url": "https://github.com/jcvalino/react-geek-form/issues"
   },
-  "homepage": "https://github.com/jcvalino/msys-reactjs-form#readme",
+  "homepage": "https://github.com/jcvalino/react-geek-form#readme",
   "devDependencies": {
     "@hookform/resolvers": "^3.3.1",
     "@rollup/plugin-commonjs": "^25.0.4",
