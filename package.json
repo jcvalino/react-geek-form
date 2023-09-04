@@ -1,6 +1,6 @@
 {
   "name": "react-geek-form",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "An experimental react form utilities used in Multisys",
   "scripts": {
     "rollup": "rollup -c"

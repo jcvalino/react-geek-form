@@ -7,7 +7,7 @@ A set of form utilities built on top of [react-hook-form](https://www.npmjs.com/
 ## Installation
 
 ```bash
-  npm i react-hook-form zod
+  npm i react-geek-form zod
 ```
 
 ## Basic Usage
