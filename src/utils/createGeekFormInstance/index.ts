@@ -5,9 +5,12 @@ import createForm from '../createForm';
 
 type FieldContext = 'register' | 'control' | 'error';
 
-type FormFieldComponent =
-  | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
-  | ((props: { name: string; control: Control<any> }) => JSX.Element);
+// TODO
+// type FormFieldComponent =
+//   | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
+//   | ((props: { name: string; control: Control<any> }) => JSX.Element);
+
+type FormFieldComponent = (props: any) => JSX.Element;
 
 const createGeekFormInstance = <
   TFormFieldName extends string,
@@ -27,11 +30,7 @@ const createGeekFormInstance = <
     zodSchema: TSchema;
   }) => {
     type InferedSchema = z.infer<TSchema>;
-    const {
-      // Form,
-      withFieldContext,
-      forwardFormContext,
-    } = createForm({ zodSchema });
+    const { withFieldContext, forwardFormContext } = createForm({ zodSchema });
 
     const registeredFields = fieldComponents.reduce<{
       [FormField in TWrappedFormFields[number] as FormField extends any
@@ -54,7 +53,6 @@ const createGeekFormInstance = <
     }, {} as any);
 
     return {
-      // Form,
       withFieldContext,
       forwardFormContext,
       ...registeredFields,

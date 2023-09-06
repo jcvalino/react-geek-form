@@ -22,9 +22,12 @@ type FormContext<TFieldValues extends FieldValues> =
 
 type FieldContext = 'register' | 'control' | 'error';
 
-type FormFieldComponent =
-  | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
-  | ((props: { name: string; control: Control<any> }) => JSX.Element);
+// TODO
+// type FormFieldComponent =
+//   | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
+//   | ((props: { name: string; control: Control<any> }) => JSX.Element);
+
+type FormFieldComponent = (props: any) => JSX.Element;
 
 const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
   zodSchema,
