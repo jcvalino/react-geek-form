@@ -9,17 +9,22 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import type { FieldValues, UseFormProps, UseFormReturn } from 'react-hook-form';
+import type {
+  Control,
+  FieldValues,
+  UseFormProps,
+  UseFormReturn,
+  UseFormRegister,
+} from 'react-hook-form';
 
 type FormContext<TFieldValues extends FieldValues> =
   UseFormReturn<TFieldValues>;
 
 type FieldContext = 'register' | 'control' | 'error';
 
-type JsxForm = React.DetailedHTMLProps<
-  React.FormHTMLAttributes<HTMLFormElement>,
-  HTMLFormElement
->;
+type FormFieldComponent =
+  | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
+  | ((props: { name: string; control: Control<any> }) => JSX.Element);
 
 const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
   zodSchema,
@@ -28,44 +33,8 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
 }) => {
   const FormContext = createContext<null | FormContext<z.infer<TSchema>>>(null);
 
-  const Form = ({
-    children,
-    onSubmit,
-    defaultFormValues,
-    onValidatedSubmit,
-    ...formProps
-  }: {
-    [K in keyof JsxForm]: K extends 'children'
-      ?
-          | React.ReactNode
-          | ((
-              useFormReturns: UseFormReturn<z.infer<TSchema>>
-            ) => React.ReactNode)
-      : JsxForm[K];
-  } & {
-    defaultFormValues?: Record<any, any>;
-    onValidatedSubmit: (values: z.infer<TSchema>) => void;
-  }) => {
-    const { handleSubmit, register, control, ...rest } = useFormContext();
-    return (
-      <form
-        {...formProps}
-        onSubmit={(e) => {
-          onSubmit?.(e);
-          handleSubmit(onValidatedSubmit)(e);
-        }}
-      >
-        {typeof children === 'function'
-          ? children({
-              handleSubmit,
-              register,
-              control,
-              ...rest,
-            } as any)
-          : children}
-      </form>
-    );
-  };
+  type InferedSchema = z.infer<TSchema>;
+  type UseFormConfigs = UseFormProps<InferedSchema>;
 
   const useFormContext = () => {
     const context = useContext(FormContext);
@@ -73,16 +42,13 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     return context;
   };
 
-  let useFormPropsRef: Omit<UseFormProps<z.infer<TSchema>>, 'resolver'> | null =
-    null;
+  let useFormPropsRef: Omit<UseFormConfigs, 'resolver'> | null = null;
 
-  type Ctx = UseFormReturn<z.infer<TSchema>> & {
-    setFormConfigs: (
-      props: Omit<UseFormProps<z.infer<TSchema>>, 'resolver'>
-    ) => void;
+  type Ctx = UseFormReturn<InferedSchema> & {
+    setFormConfigs: (props: Omit<UseFormConfigs, 'resolver'>) => void;
   };
 
-  const forwardContext = <
+  const forwardFormContext = <
     TWrappedComponent extends (props: any, ctx: Ctx) => JSX.Element
   >(
     component: TWrappedComponent
@@ -92,12 +58,9 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         onInitializedFormContext?: (ctx: Ctx) => void;
       }
     ) => {
-      const setFormConfigs = useCallback(
-        (props: UseFormProps<z.infer<TSchema>>) => {
-          useFormPropsRef = props;
-        },
-        []
-      );
+      const setFormConfigs = useCallback((props: UseFormConfigs) => {
+        useFormPropsRef = props;
+      }, []);
 
       const form = useForm({
         resolver: zodResolver(zodSchema),
@@ -124,9 +87,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     };
   };
 
-  const withContext = <
-    TWrappedFormField extends (...props: any[]) => JSX.Element
-  >(
+  const withFieldContext = <TWrappedFormField extends FormFieldComponent>(
     WrappedFormField: TWrappedFormField
   ) => {
     return (remainingProps: {
@@ -134,7 +95,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         React.ComponentPropsWithoutRef<TWrappedFormField>,
         FieldContext
       >]: K extends 'name'
-        ? keyof z.infer<TSchema>
+        ? keyof InferedSchema
         : Omit<
             React.ComponentPropsWithoutRef<TWrappedFormField>,
             FieldContext
@@ -158,10 +119,54 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
   };
 
   return {
-    Form,
-    withContext,
-    forwardContext,
+    // Form,
+    withFieldContext,
+    forwardFormContext,
   };
 };
 
 export default createForm;
+
+// type JsxForm = React.DetailedHTMLProps<
+//   React.FormHTMLAttributes<HTMLFormElement>,
+//   HTMLFormElement
+// >;
+
+// const Form = ({
+//   children,
+//   onSubmit,
+//   defaultFormValues,
+//   onValidatedSubmit,
+//   ...formProps
+// }: {
+//   [K in keyof JsxForm]: K extends 'children'
+//     ?
+//         | React.ReactNode
+//         | ((
+//             useFormReturns: UseFormReturn<z.infer<TSchema>>
+//           ) => React.ReactNode)
+//     : JsxForm[K];
+// } & {
+//   defaultFormValues?: Record<any, any>;
+//   onValidatedSubmit: (values: z.infer<TSchema>) => void;
+// }) => {
+//   const { handleSubmit, register, control, ...rest } = useFormContext();
+//   return (
+//     <form
+//       {...formProps}
+//       onSubmit={(e) => {
+//         onSubmit?.(e);
+//         handleSubmit(onValidatedSubmit)(e);
+//       }}
+//     >
+//       {typeof children === 'function'
+//         ? children({
+//             handleSubmit,
+//             register,
+//             control,
+//             ...rest,
+//           } as any)
+//         : children}
+//     </form>
+//   );
+// };

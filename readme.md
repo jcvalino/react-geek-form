@@ -26,14 +26,14 @@ A set of form utilities built on top of [react-hook-form](https://www.npmjs.com/
 import { z } from 'zod';
 import { createForm } from 'react-geek-form';
 
-const { forwardContext } = createForm({
+const { forwardFormContext } = createForm({
   zodSchema: z.object({
     email: z.string().min(1, 'Required'),
     password: z.string().min(1, 'Required'),
   }),
 });
 
-const LoginForm = forwardContext((props, ctx) {
+const LoginForm = forwardFormContext((props, ctx) {
   return (
     <form onSubmit={ctx.handleSubmit((values) => {
       // do anything with values
@@ -44,6 +44,11 @@ const LoginForm = forwardContext((props, ctx) {
   )
 });
 ```
+
+### TODO: Document the following;
+
+- createForm
+- createGeekFormInstance
 
 ### Used By
 
