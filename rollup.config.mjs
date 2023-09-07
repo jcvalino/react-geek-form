@@ -20,7 +20,7 @@ export default [
         sourcemap: true,
       },
     ],
-    external: ['react'],
+    external: ['react', 'zod'],
     plugins: [
       resolve(),
       commonjs(),
@@ -30,7 +30,7 @@ export default [
   {
     input: 'dist/esm/types/index.d.ts',
     output: [{ file: 'dist/index.d.ts', format: 'esm' }],
-    external: ['react'],
+    external: ['react', 'zod'],
     plugins: [
       dts({
         respectExternal: true,
