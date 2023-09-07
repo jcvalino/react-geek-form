@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { Control, UseFormRegister } from 'react-hook-form';
 
 import createForm from '../createForm';
 
@@ -48,7 +47,7 @@ const createGeekFormInstance = <
       }) => JSX.Element;
     }>((fields, field) => {
       // @ts-expect-error
-      fields[field.name] = withContext(field.component);
+      fields[field.name] = withFieldContext(field.component);
       return fields;
     }, {} as any);
 
