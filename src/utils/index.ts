@@ -3,6 +3,7 @@ export type {
   FieldError,
   FieldValues,
   UseFormWatch,
+  UseFormReturn,
   UseFormRegister,
   UseFormSetError,
   UseFormGetValues,
