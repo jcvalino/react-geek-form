@@ -1,20 +1,14 @@
-import type {
+export type {
+  Control,
+  FieldError,
   FieldValues,
+  UseFormWatch,
   UseFormRegister,
-  Control as Ctrl,
-  FieldError as FldErr,
+  UseFormSetError,
+  UseFormGetValues,
+  UseFormClearErrors,
 } from 'react-hook-form';
 
 export { useController } from 'react-hook-form';
 export { default as createForm } from './createForm';
 export { default as createGeekFormInstance } from './createGeekFormInstance';
-
-export type Register<TFieldValues extends FieldValues> =
-  UseFormRegister<TFieldValues>;
-
-export type Control<
-  TFieldValues extends FieldValues = FieldValues,
-  TContext = any
-> = Ctrl<TFieldValues, TContext>;
-
-export type FieldError = FldErr;
