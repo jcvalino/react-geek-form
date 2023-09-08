@@ -50,28 +50,23 @@ const LoginForm = forwardFormContext((props, ctx) {
 ##
 
 ### API's  📖
-
-
 ### createForm
 `createForm` is a utility that creates a closure that encapsulates all the functionality of `react-hook-form's "useForm" hook` and `zod` .  
-
-> It is basically a react-hook-form without a hook 😂.
 
 **Props**
  - zodSchema
    - Defines the validation schema of your form using `"z" object from zod`. This will also enables typescript type safety and code auto complete specially while using the **ctx** object.
 
  **Return**
- - forwardContext    
+ - forwardFormContext    
       - Wraps your form component and injects the **ctx** object to the second parameter `(just like the react's forwardRef)`.
       - Adds optional `onInitializedFormContext` prop to wrapped component.
-
 ```jsx
 const LoginForm = forwardFormContext(() => {
   ...
 });
 
-const MyApp = (props, ctx) => {
+const MyApp = () => {
   return (
     <div>
       <LoginForm
@@ -83,12 +78,32 @@ const MyApp = (props, ctx) => {
     </div>
   );
 };
-
 ```
+  - withFieldContext
+    - Wraps custom field component and pass appropriate props such as "register" or "control" and "error".
+    - Adds type safety / auto complete to name prop.
+    - Requirements;
+      - Field component that will be wrap must have "register" or "control" and "name" props.
+
+```jsx
+const CustomInput = ({name, register}: Props) => {
+  return <input {...register(name)} />
+}
+
+const Input = withFieldContext(CustomInput);
+```
+>Actual screenshot of the implementation. The "name" prop type "string" transform to union type ("email" | "password") from keyof the defined zodSchema in createForm. Furthermore,  the "register" (or "control") prop will automatically be stripped in the type Props because it will be injected by "withFieldContext".
+>
+><img width="600" alt="image" src="https://github.com/jcvalino/react-geek-form/assets/67889183/2ec3c524-d59f-4299-932b-2aadd4384954">
+
+- OtherCustomFields (If you use createGeekFormInstace)  
+
+
+
        
 What is **ctx** object ?
 
-Basically it is the same object that the "`useForm`" hook returns (click [here](https://react-hook-form.com/docs/useform) to know more) but with one addition, that is **`setFormConfigs`**.  What is setFormConfigs for? ... ... ... You've guest it right! It is the function we use to pass the config behind the scene to `useForm(<cofigs>)` but with one deduction, you can't pass the "resolver" property since we've already passed it in createForm's zodSchema.
+Basically it is the same object that the "`useForm`" hook returns (click [here](https://react-hook-form.com/docs/useform) to know more) but with one addition, that is **`setFormConfigs`**.  What is setFormConfigs for? ... ... ... You've guest it right! It is the function we use to pass the config behind the scene to `useForm(<configs>)` but with one deduction, you can't pass the "resolver" property since we've already passed it in createForm's zodSchema.
 
 ### createGeekFormIntance
 
@@ -106,3 +121,4 @@ This project is used by the following companies:
 ### Contributors
 
 - [@jcvalino](https://github.com/jcvalino)
+
