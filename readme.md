@@ -35,7 +35,7 @@ const { forwardFormContext } = createForm({
   }),
 });
 
-const LoginForm = forwardFormContext((props, ctx) {
+const LoginForm = forwardFormContext((props, ctx) => {
   return (
     <form onSubmit={ctx.handleSubmit((values) => {
       // do anything with values
@@ -62,7 +62,7 @@ const LoginForm = forwardFormContext((props, ctx) {
       - Wraps your form component and injects the **ctx** object to the second parameter `(just like the react's forwardRef)`.
       - Adds optional `onInitializedFormContext` prop to wrapped component.
 ```jsx
-const LoginForm = forwardFormContext(() => {
+const LoginForm = forwardFormContext((props, ctx) => {
   ...
 });
 
