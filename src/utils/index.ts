@@ -10,7 +10,13 @@ export type {
   UseFormGetValues,
   UseFormClearErrors,
 } from 'react-hook-form';
-export { useController, useWatch, useForm } from 'react-hook-form';
+
+export {
+  useForm,
+  useWatch,
+  useController,
+  useFieldArray,
+} from 'react-hook-form';
 
 export { default as createForm } from './createForm';
 export { default as createGeekFormInstance } from './createGeekFormInstance';
