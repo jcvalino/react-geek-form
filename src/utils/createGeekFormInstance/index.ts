@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { type FieldName } from 'react-hook-form';
 
 import createForm from '../createForm';
 
@@ -39,7 +40,7 @@ const createGeekFormInstance = <
           React.ComponentPropsWithoutRef<FormField['component']>,
           FieldContext
         >]: K extends 'name'
-          ? keyof InferedSchema
+          ? FieldName<InferedSchema>
           : Omit<
               React.ComponentPropsWithoutRef<FormField['component']>,
               FieldContext
