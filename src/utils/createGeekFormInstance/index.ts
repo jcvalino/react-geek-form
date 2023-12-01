@@ -30,7 +30,9 @@ const createGeekFormInstance = <
     zodSchema: TSchema;
   }) => {
     type InferedSchema = z.infer<TSchema>;
-    const { withFieldContext, forwardFormContext } = createForm({ zodSchema });
+    const { forwardFormContext, withFieldContext, useFormContext } = createForm(
+      { zodSchema }
+    );
 
     const registeredFields = fieldComponents.reduce<{
       [FormField in TWrappedFormFields[number] as FormField extends any
@@ -53,6 +55,7 @@ const createGeekFormInstance = <
     }, {} as any);
 
     return {
+      useFormContext,
       withFieldContext,
       forwardFormContext,
       ...registeredFields,

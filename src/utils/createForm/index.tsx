@@ -33,22 +33,23 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
 }: {
   zodSchema: TSchema;
 }) => {
-  const FormContext = createContext<null | FormContext<z.infer<TSchema>>>(null);
+  type Ctx = UseFormReturn<InferedSchema> & {
+    setFormConfigs: (props: Omit<UseFormConfigs, 'resolver'>) => void;
+  };
+
+  const FormContext = createContext<null | Ctx>(null);
 
   type InferedSchema = z.infer<TSchema>;
   type UseFormConfigs = UseFormProps<InferedSchema>;
 
   const useFormContext = () => {
     const context = useContext(FormContext);
-    if (!context) throw new Error('Invalid use');
+    if (!context)
+      throw new Error("Invalid use. Must be inside of a 'forwardFormContext'");
     return context;
   };
 
   let useFormPropsRef: Omit<UseFormConfigs, 'resolver'> | null = null;
-
-  type Ctx = UseFormReturn<InferedSchema> & {
-    setFormConfigs: (props: Omit<UseFormConfigs, 'resolver'>) => void;
-  };
 
   const forwardFormContext = <
     TWrappedComponent extends (props: any, ctx: Ctx) => JSX.Element
@@ -82,7 +83,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
       }, [ctx, props]);
 
       return (
-        <FormContext.Provider value={form}>
+        <FormContext.Provider value={ctx}>
           {component(props, ctx)}
         </FormContext.Provider>
       );
@@ -121,54 +122,10 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
   };
 
   return {
-    // Form,
+    useFormContext,
     withFieldContext,
     forwardFormContext,
   };
 };
 
 export default createForm;
-
-// type JsxForm = React.DetailedHTMLProps<
-//   React.FormHTMLAttributes<HTMLFormElement>,
-//   HTMLFormElement
-// >;
-
-// const Form = ({
-//   children,
-//   onSubmit,
-//   defaultFormValues,
-//   onValidatedSubmit,
-//   ...formProps
-// }: {
-//   [K in keyof JsxForm]: K extends 'children'
-//     ?
-//         | React.ReactNode
-//         | ((
-//             useFormReturns: UseFormReturn<z.infer<TSchema>>
-//           ) => React.ReactNode)
-//     : JsxForm[K];
-// } & {
-//   defaultFormValues?: Record<any, any>;
-//   onValidatedSubmit: (values: z.infer<TSchema>) => void;
-// }) => {
-//   const { handleSubmit, register, control, ...rest } = useFormContext();
-//   return (
-//     <form
-//       {...formProps}
-//       onSubmit={(e) => {
-//         onSubmit?.(e);
-//         handleSubmit(onValidatedSubmit)(e);
-//       }}
-//     >
-//       {typeof children === 'function'
-//         ? children({
-//             handleSubmit,
-//             register,
-//             control,
-//             ...rest,
-//           } as any)
-//         : children}
-//     </form>
-//   );
-// };
