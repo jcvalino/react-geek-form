@@ -26,7 +26,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
   zodSchema: TSchema;
 }) => {
   type Ctx = UseFormReturn<InferedSchema> & {
-    setFormConfigs: (props: Omit<UseFormConfigs, 'resolver'>) => void;
+    setFormConfigs: (props: UseFormConfigs) => void;
   };
 
   const FormContext = createContext<null | Ctx>(null);
@@ -41,7 +41,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     return context;
   };
 
-  let useFormPropsRef: Omit<UseFormConfigs, 'resolver'> | null = null;
+  let useFormPropsRef: UseFormConfigs | null = null;
 
   const forwardFormContext = <
     TWrappedComponent extends (props: any, ctx: Ctx) => JSX.Element
@@ -60,23 +60,25 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
       const form = useForm({
         resolver: zodResolver(zodSchema),
         ...(useFormPropsRef ?? {}),
-      });
+      }) as Ctx;
 
-      const ctx = useMemo(
-        () => ({
-          ...form,
-          setFormConfigs,
-        }),
-        [form, setFormConfigs]
-      );
+      form.setFormConfigs = setFormConfigs;
+
+      // const ctx = useMemo(
+      //   () => ({
+      //     ...form,
+      //     setFormConfigs,
+      //   }),
+      //   [form, setFormConfigs]
+      // );
 
       useEffect(() => {
-        props.onInitializedFormContext?.(ctx);
-      }, [ctx, props]);
+        props.onInitializedFormContext?.(form);
+      }, [form, props]);
 
       return (
-        <FormContext.Provider value={ctx}>
-          {component(props, ctx)}
+        <FormContext.Provider value={form}>
+          {component(props, form)}
         </FormContext.Provider>
       );
     };
