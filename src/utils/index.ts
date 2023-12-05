@@ -18,5 +18,7 @@ export {
   useFieldArray,
 } from 'react-hook-form';
 
+export { zodResolver } from '@hookform/resolvers/zod';
+
 export { default as createForm } from './createForm';
 export { default as createGeekFormInstance } from './createGeekFormInstance';

@@ -9,15 +9,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import type {
-  FieldName,
-  FieldValues,
-  UseFormProps,
-  UseFormReturn,
-} from 'react-hook-form';
-
-type FormContext<TFieldValues extends FieldValues> =
-  UseFormReturn<TFieldValues>;
+import type { FieldName, UseFormProps, UseFormReturn } from 'react-hook-form';
 
 type FieldContext = 'register' | 'control' | 'error';
 
