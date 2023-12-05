@@ -1,6 +1,6 @@
 {
   "name": "react-geek-form",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A set of form utilities built on top of react-hook-form and zod",
   "scripts": {
     "rollup": "rollup -c"
