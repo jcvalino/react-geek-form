@@ -64,14 +64,6 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
 
       form.setFormConfigs = setFormConfigs;
 
-      // const ctx = useMemo(
-      //   () => ({
-      //     ...form,
-      //     setFormConfigs,
-      //   }),
-      //   [form, setFormConfigs]
-      // );
-
       useEffect(() => {
         props.onInitializedFormContext?.(form);
       }, [form, props]);
@@ -122,17 +114,12 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         formState: { errors },
       } = useFormContext();
 
-      const error = useMemo(
-        () => getStringyfiedNestedAttribute(errors, remainingProps.name),
-        [errors, remainingProps.name]
-      );
-
       return (
         // @ts-expect-error
         <WrappedFormField
           control={control}
           register={register}
-          error={error}
+          error={getStringyfiedNestedAttribute(errors, remainingProps.name)}
           {...remainingProps}
         />
       );
