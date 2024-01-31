@@ -1,15 +1,14 @@
 import React, {
-  useMemo,
   useEffect,
   useContext,
   useCallback,
   createContext,
 } from 'react';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { FieldPath, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import type { FieldName, UseFormProps, UseFormReturn } from 'react-hook-form';
+import type { UseFormProps, UseFormReturn } from 'react-hook-form';
 
 type FieldContext = 'register' | 'control' | 'error';
 
@@ -102,7 +101,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         React.ComponentPropsWithoutRef<TWrappedFormField>,
         FieldContext
       >]: K extends 'name'
-        ? FieldName<InferedSchema>
+        ? FieldPath<InferedSchema>
         : Omit<
             React.ComponentPropsWithoutRef<TWrappedFormField>,
             FieldContext
