@@ -86,6 +86,11 @@ const MyApp = () => {
       - Field component that will be wrap must have "register" or "control" and "name" props.
 
 ```jsx
+type Props = {
+  name: string;
+  register: UseFormRegister<any>
+}
+
 const CustomInput = ({name, register}: Props) => {
   return <input {...register(name)} />
 }
@@ -103,7 +108,7 @@ const Input = withFieldContext(CustomInput);
        
 What is **ctx** object ?
 
-Basically it is the same object that the "`useForm`" hook returns (click [here](https://react-hook-form.com/docs/useform) to know more) but with one addition, that is **`setFormConfigs`**.  What is setFormConfigs for? ... ... ... You've guest it right! It is the function we use to pass the config behind the scene to `useForm(<configs>)` but with one deduction, you can't pass the "resolver" property since we've already passed it in createForm's zodSchema.
+Basically it is the same object that the "`useForm`" hook returns (click [here](https://react-hook-form.com/docs/useform) to know more) but with one addition, that is **`setFormConfigs`**.  What is setFormConfigs for? ... ... ... You've guest it right! It is the function we use to pass the config behind the scene to `useForm(<configs>)`.
 
 ### createGeekFormIntance
 
