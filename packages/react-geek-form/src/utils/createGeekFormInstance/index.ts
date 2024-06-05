@@ -3,7 +3,7 @@ import { type FieldPath } from 'react-hook-form';
 
 import createForm from '../createForm';
 
-type FieldContext = 'register' | 'control' | 'error';
+type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
 
 // TODO
 // type FormFieldComponent =
@@ -30,9 +30,7 @@ const createGeekFormInstance = <
     zodSchema: TSchema;
   }) => {
     type InferedSchema = z.infer<TSchema>;
-    const { forwardFormContext, withFieldContext, useFormContext } = createForm(
-      { zodSchema }
-    );
+    const form = createForm({ zodSchema });
 
     const registeredFields = fieldComponents.reduce<{
       [FormField in TWrappedFormFields[number] as FormField extends any
@@ -40,24 +38,22 @@ const createGeekFormInstance = <
         : never]: (props: {
         [K in keyof Omit<
           React.ComponentPropsWithoutRef<FormField['component']>,
-          FieldContext
+          ContextInjectedFieldPropKey
         >]: K extends 'name'
           ? FieldPath<InferedSchema>
           : Omit<
               React.ComponentPropsWithoutRef<FormField['component']>,
-              FieldContext
+              ContextInjectedFieldPropKey
             >[K];
       }) => JSX.Element;
     }>((fields, field) => {
       // @ts-expect-error
-      fields[field.name] = withFieldContext(field.component);
+      fields[field.name] = form.withFieldContext(field.component);
       return fields;
     }, {} as any);
 
     return {
-      useFormContext,
-      withFieldContext,
-      forwardFormContext,
+      ...form,
       ...registeredFields,
     };
   };
