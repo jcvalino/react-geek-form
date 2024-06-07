@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useContext,
-  useCallback,
-  createContext,
-} from 'react';
+import React, { useEffect, useContext, createContext, useState } from 'react';
 import { z } from 'zod';
 import {
   useForm,
@@ -20,15 +15,6 @@ import type {
   UseWatchProps,
   UseFormStateProps,
 } from 'react-hook-form';
-
-type WrapperLayerProps = {
-  component: (props: any, ctx: any) => JSX.Element;
-  props: any;
-  ctx: any;
-};
-const WrapperLayer = ({ component, props, ctx }: WrapperLayerProps) => {
-  return <>{component(props, ctx)}</>;
-};
 
 type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
 
@@ -56,6 +42,18 @@ const getStringyfiedNestedAttribute = <TReturn extends any = any>(
 
   return getter(obj, attributesArray) as TReturn;
 };
+
+type WrapperLayer = <
+  TCtx,
+  TWrappedComponent extends (props: any, ctx: TCtx) => JSX.Element
+>(props: {
+  component: TWrappedComponent;
+  props: any;
+  ctx: TCtx;
+}) => any;
+
+const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
+  component(props, ctx);
 
 const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
   zodSchema,
@@ -107,25 +105,23 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     });
   };
 
-  let useFormPropsRef: UseFormConfigs | null = null;
-
   const forwardFormContext = <
     TWrappedComponent extends (props: any, ctx: Ctx) => JSX.Element
   >(
-    component: TWrappedComponent
+    WrappedComponent: TWrappedComponent
   ) => {
     return (
       props: React.ComponentPropsWithoutRef<TWrappedComponent> & {
         onInitializedFormContext?: (ctx: Ctx) => void;
       }
     ) => {
-      const setFormConfigs = useCallback((props: UseFormConfigs) => {
-        useFormPropsRef = props;
-      }, []);
+      const [formConfigs, setFormConfigs] = useState<UseFormConfigs | null>(
+        null
+      );
 
       const form = useForm({
         resolver: zodResolver(zodSchema),
-        ...(useFormPropsRef ?? {}),
+        ...(formConfigs ?? {}),
       }) as Ctx;
 
       form.setFormConfigs = setFormConfigs;
@@ -134,9 +130,21 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         props.onInitializedFormContext?.(form);
       }, [form, props]);
 
+      const [isRendered, setIsRendered] = useState(false);
+
+      useEffect(() => {
+        setIsRendered(true);
+      }, [setIsRendered]);
+
       return (
         <FormContext.Provider value={form}>
-          <WrapperLayer component={component} props={props} ctx={form} />
+          {isRendered && (
+            <WrapperLayer
+              ctx={form}
+              props={props}
+              component={WrappedComponent}
+            />
+          )}
         </FormContext.Provider>
       );
     };
