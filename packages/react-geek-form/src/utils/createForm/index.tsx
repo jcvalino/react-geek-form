@@ -65,6 +65,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
 
   type Ctx = UseFormReturn<InferedSchema> & {
     setFormConfigs: (props: UseFormConfigs) => void;
+    setZodSchema: React.Dispatch<React.SetStateAction<TSchema>>;
   };
 
   const FormContext = createContext<null | Ctx>(null);
@@ -115,16 +116,18 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         onInitializedFormContext?: (ctx: Ctx) => void;
       }
     ) => {
-      const [formConfigs, setFormConfigs] = useState<UseFormConfigs | null>(
+      const [_zodSchema, _setZodSchema] = useState<TSchema>(zodSchema);
+      const [_formConfigs, _setFormConfigs] = useState<UseFormConfigs | null>(
         null
       );
 
       const form = useForm({
-        resolver: zodResolver(zodSchema),
-        ...(formConfigs ?? {}),
+        resolver: zodResolver(_zodSchema),
+        ...(_formConfigs ?? {}),
       }) as Ctx;
 
-      form.setFormConfigs = setFormConfigs;
+      form.setZodSchema = _setZodSchema;
+      form.setFormConfigs = _setFormConfigs;
 
       useEffect(() => {
         props.onInitializedFormContext?.(form);
