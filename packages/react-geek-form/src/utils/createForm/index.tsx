@@ -55,7 +55,9 @@ type WrapperLayer = <
 const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
   component(props, ctx);
 
-const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
+type ValidSchema = z.ZodObject<any> | z.ZodEffects<any>;
+
+const createForm = <TSchema extends ValidSchema>({
   zodSchema,
 }: {
   zodSchema: TSchema;
@@ -65,7 +67,9 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
 
   type Ctx = UseFormReturn<InferedSchema> & {
     setFormConfigs: (props: UseFormConfigs) => void;
-    setZodSchema: React.Dispatch<React.SetStateAction<TSchema>>;
+    setZodSchema: (
+      schema: ValidSchema | ((schema: TSchema) => ValidSchema)
+    ) => void;
   };
 
   const FormContext = createContext<null | Ctx>(null);
@@ -116,7 +120,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         onInitializedFormContext?: (ctx: Ctx) => void;
       }
     ) => {
-      const [_zodSchema, _setZodSchema] = useState<TSchema>(zodSchema);
+      const [_zodSchema, _setZodSchema] = useState<ValidSchema>(zodSchema);
       const [_formConfigs, _setFormConfigs] = useState<UseFormConfigs | null>(
         null
       );
@@ -126,6 +130,7 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
         ...(_formConfigs ?? {}),
       }) as Ctx;
 
+      // @ts-expect-error
       form.setZodSchema = _setZodSchema;
       form.setFormConfigs = _setFormConfigs;
 
@@ -160,11 +165,17 @@ const createForm = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
       React.ComponentPropsWithoutRef<TWrappedFormField>,
       ContextInjectedFieldPropKey
     >;
-    return (remainingProps: {
-      [K in keyof FormFieldUniqueProps]: K extends 'name'
-        ? FieldPath<InferedSchema>
-        : FormFieldUniqueProps[K];
-    }) => {
+    return <TNoStrict extends boolean = false>(
+      remainingProps: {
+        [K in keyof FormFieldUniqueProps]: K extends 'name'
+          ? TNoStrict extends false
+            ? FieldPath<InferedSchema>
+            : string
+          : FormFieldUniqueProps[K];
+      } & {
+        noStrict?: TNoStrict;
+      }
+    ) => {
       const {
         control,
         register,

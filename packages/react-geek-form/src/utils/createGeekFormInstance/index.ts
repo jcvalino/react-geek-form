@@ -35,17 +35,23 @@ const createGeekFormInstance = <
     const registeredFields = fieldComponents.reduce<{
       [FormField in TWrappedFormFields[number] as FormField extends any
         ? FormField['name']
-        : never]: (props: {
-        [K in keyof Omit<
-          React.ComponentPropsWithoutRef<FormField['component']>,
-          ContextInjectedFieldPropKey
-        >]: K extends 'name'
-          ? FieldPath<InferedSchema>
-          : Omit<
-              React.ComponentPropsWithoutRef<FormField['component']>,
-              ContextInjectedFieldPropKey
-            >[K];
-      }) => JSX.Element;
+        : never]: <TNoStrict extends boolean = false>(
+        props: {
+          [K in keyof Omit<
+            React.ComponentPropsWithoutRef<FormField['component']>,
+            ContextInjectedFieldPropKey
+          >]: K extends 'name'
+            ? TNoStrict extends false
+              ? FieldPath<InferedSchema>
+              : string
+            : Omit<
+                React.ComponentPropsWithoutRef<FormField['component']>,
+                ContextInjectedFieldPropKey
+              >[K];
+        } & {
+          noStrict?: TNoStrict;
+        }
+      ) => JSX.Element;
     }>((fields, field) => {
       // @ts-expect-error
       fields[field.name] = form.withFieldContext(field.component);
