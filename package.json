@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "turbo build",
+    "build:package": "npm run --workspace=packages/react-geek-form build",
     "dev": "turbo dev"
   },
   "author": "",
