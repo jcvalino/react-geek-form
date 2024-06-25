@@ -6,21 +6,34 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [
     starlight({
-      title: 'react-geek-form',
+      title: '<ReactGeekForm />',
+      logo: {
+        src: './src/assets/icon.svg',
+      },
       social: {
         github: 'https://github.com/jcvalino/react-geek-form',
       },
       sidebar: [
         {
-          label: 'Guides',
+          label: 'Getting Started',
           items: [
             // Each item here is one entry in the navigation menu.
-            { label: 'Example Guide', link: '/guides/example/' },
+            { label: 'Installation', link: '/getting-started/installation/' },
+            { label: 'Quickstart', link: '/getting-started/quick-start/' },
           ],
         },
         {
-          label: 'Reference',
-          autogenerate: { directory: 'reference' },
+          label: "API's",
+          items: [
+            {
+              label: 'createForm',
+              link: '/api/create-form/',
+            },
+            {
+              label: 'createGeekFormInstance',
+              link: '/api/create-geek-form-instance/',
+            },
+          ],
         },
       ],
       customCss: ['./src/tailwind.css'],

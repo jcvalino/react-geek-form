@@ -1,0 +1,94 @@
+---
+title: createForm
+description: A reference page in my new Starlight docs site.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A utility that creates a closure that encapsulates all the functionality of `react-hook-form`'s `useForm` hook and `zod` .
+
+## Props
+
+### zodSchema
+
+- Defines the validation schema of your form using `"z" object from zod`. This will also enables typescript type safety and code auto complete specially while using the **ctx** object.
+
+```jsx
+import { z } from "zod";
+import { createForm } from "react-geek-form";
+
+const { forwardFormContext, ... } = createForm({
+  zodSchema: z.object({
+    email: z.string().min(1, 'Required'),
+    password: z.string().min(1, 'Required'),
+  })
+})
+```
+
+## Returns
+
+### forwardFormContext
+
+- Wraps your form component and injects the **ctx** object to the second parameter `(just like the react's forwardRef)`.
+- Adds optional `onInitializedFormContext` prop to wrapped component.
+
+```jsx
+const { forwardFormContext, ... } = createForm({
+  ...
+})
+
+const LoginForm = forwardFormContext((props, ctx) => {
+  return (
+    ...
+  )
+});
+
+const App = () => {
+  return (
+    <LoginForm
+      onInitializedFormContext={(ctx) => {
+        // do anything with ctx
+        // e.g. ctx.getValues() to get the form values outside the component!
+      }}
+    />
+  );
+};
+```
+
+### withFieldContext
+
+- Wraps custom field component and pass appropriate props such as "register" or "control" and "error".
+- Adds type safety / auto complete to name prop.
+- Requirements;
+  - Field component that will be wrap must have "register" or "control" and "name" props.
+
+```jsx
+type Props = {
+  name: string,
+  register: UseFormRegister<any>,
+};
+
+const CustomInput = ({ name, register }: Props) => {
+  return <input {...register(name)} />;
+};
+
+const { withFieldContext, ... } = createForm({
+  ...
+})
+
+const Input = withFieldContext(CustomInput);
+```
+
+<Aside type="tip" title="Actual Screenshot">
+  The "name" prop type "string" transform to union type `"email" | "password"`
+  from keyof the defined zodSchema in createForm. Furthermore, the "register"
+  (or "control") prop will automatically be stripped in the type Props because
+  it will be injected by "withFieldContext".
+  <img
+    width="600"
+    alt="image"
+    src="https://github.com/jcvalino/react-geek-form/assets/67889183/2ec3c524-d59f-4299-932b-2aadd4384954"
+  />
+</Aside>
+
+- OtherCustomFields (If you use createGeekFormInstace)
