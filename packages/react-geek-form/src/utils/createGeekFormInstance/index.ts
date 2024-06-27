@@ -1,28 +1,44 @@
 import { z } from 'zod';
-import { type FieldPath } from 'react-hook-form';
+import {
+  Control,
+  FieldError,
+  UseFormRegister,
+  type FieldPath,
+} from 'react-hook-form';
 
 import createForm from '../createForm';
+import React from 'react';
 
 type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
 
-// TODO
-// type FormFieldComponent =
-//   | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
-//   | ((props: { name: string; control: Control<any> }) => JSX.Element);
-
-type FormFieldComponent = (props: any) => JSX.Element;
+type MandatoryFieldProps = {
+  name: string;
+  error?: FieldError;
+} & (
+  | {
+      register: UseFormRegister<any>;
+    }
+  | {
+      control: Control<any>;
+    }
+);
 
 const createGeekFormInstance = <
   TFormFieldName extends string,
-  TFormFieldComponent extends FormFieldComponent,
   TWrappedFormFields extends {
-    readonly name: TFormFieldName;
-    readonly component: TFormFieldComponent;
+    name: TFormFieldName;
+    component: {
+      (props: any): Parameters<
+        TWrappedFormFields[number]['component']
+      >[0] extends MandatoryFieldProps
+        ? JSX.Element
+        : never;
+    };
   }[]
 >({
   fieldComponents,
 }: {
-  readonly fieldComponents: TWrappedFormFields;
+  fieldComponents: TWrappedFormFields;
 }) => {
   const cF = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     zodSchema,
