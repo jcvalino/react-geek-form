@@ -1,19 +1,21 @@
 import { z } from 'zod';
-import {
-  Control,
-  FieldError,
-  UseFormRegister,
-  type FieldPath,
-} from 'react-hook-form';
+import React from 'react';
 
 import createForm from '../createForm';
-import React from 'react';
+
+import type {
+  Control,
+  FieldPath,
+  FieldError,
+  ErrorOption,
+  UseFormRegister,
+} from 'react-hook-form';
 
 type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
 
 type MandatoryFieldProps = {
   name: string;
-  error?: FieldError;
+  error?: FieldError | ErrorOption;
 } & (
   | {
       register: UseFormRegister<any>;
