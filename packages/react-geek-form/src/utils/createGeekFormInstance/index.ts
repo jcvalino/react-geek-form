@@ -1,8 +1,3 @@
-import { z } from 'zod';
-import React from 'react';
-
-import createForm from '../createForm';
-
 import type {
   Control,
   FieldPath,
@@ -10,6 +5,12 @@ import type {
   ErrorOption,
   UseFormRegister,
 } from 'react-hook-form';
+import { z } from 'zod';
+import React from 'react';
+
+import createForm from '../createForm';
+
+import { IsOneOfIndexesExtends, UnionToArray } from '../types';
 
 type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
 
@@ -21,26 +22,61 @@ type MandatoryFieldProps = {
       register: UseFormRegister<any>;
     }
   | {
-      control: Control<any>;
+      control: Control<any>; // Note: Fix this!
     }
 );
 
+type FormField = {
+  name: any;
+  component: (props: any) => JSX.Element;
+};
+
+type FindErrorFieldIndexes<
+  TFormFields extends any[],
+  TErrorFieldIndexes extends number = never
+> = IsOneOfIndexesExtends<
+  UnionToArray<
+    TFormFields extends [...any, infer RField]
+      ? RField extends FormField
+        ? Parameters<RField['component']>[0]
+        : never
+      : never
+  >,
+  MandatoryFieldProps
+> extends true
+  ? TFormFields extends [...infer TFormFieldsFrontRest, any]
+    ? FindErrorFieldIndexes<TFormFieldsFrontRest, TErrorFieldIndexes>
+    : TErrorFieldIndexes
+  : TFormFields extends [...infer TFormFieldsFrontRest, any]
+  ? TFormFieldsFrontRest['length'] extends 0
+    ? TErrorFieldIndexes | TFormFieldsFrontRest['length']
+    : FindErrorFieldIndexes<
+        TFormFieldsFrontRest,
+        TErrorFieldIndexes | TFormFieldsFrontRest['length']
+      >
+  : never;
+
 const createGeekFormInstance = <
   TFormFieldName extends string,
-  TWrappedFormFields extends {
+  const TWrappedFormFields extends {
     name: TFormFieldName;
     component: {
-      (props: any): Parameters<
-        TWrappedFormFields[number]['component']
-      >[0] extends MandatoryFieldProps
-        ? JSX.Element
-        : never;
+      (props: any): JSX.Element;
     };
-  }[]
+  }[],
+  TErrorFieldIndexes = FindErrorFieldIndexes<TWrappedFormFields>
 >({
   fieldComponents,
 }: {
   fieldComponents: TWrappedFormFields;
+} & {
+  [K in keyof (TErrorFieldIndexes extends never
+    ? { errorFields?: any }
+    : { errorFields: any }) as K extends 'errorFields'
+    ? K
+    : never]: TErrorFieldIndexes extends number
+    ? TWrappedFormFields[TErrorFieldIndexes]['name']
+    : never;
 }) => {
   const cF = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     zodSchema,
@@ -88,3 +124,44 @@ const createGeekFormInstance = <
 };
 
 export default createGeekFormInstance;
+
+// type A = [
+//   {
+//     name: 'test0';
+//     component: (props: {
+//       name: string;
+//       register: UseFormRegister<any>;
+//     }) => JSX.Element;
+//   },
+//   {
+//     name: 'test1';
+//     component: (props: {
+//       name: string;
+//       register: UseFormRegister<any>;
+//       age: number;
+//     }) => JSX.Element;
+//   },
+//   {
+//     name: 'test2';
+//     component: (props: {
+//       name: string;
+//       register: UseFormRegister<any>;
+//     }) => JSX.Element;
+//   },
+//   {
+//     name: 'test3';
+//     component: (props: {
+//       name: string;
+//       // register: UseFormRegister<any>;
+//     }) => JSX.Element;
+//   },
+//   {
+//     name: 'test4';
+//     component: (props: {
+//       name: string;
+//       register: UseFormRegister<any>;
+//     }) => JSX.Element;
+//   }
+// ];
+
+// type Test = FindErrorFieldIndexes<A>;
