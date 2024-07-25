@@ -1,12 +1,12 @@
-import React, { useEffect, useContext, createContext, useState } from 'react';
-import { z } from 'zod';
 import {
   useForm,
+  Controller,
   useWatch as _useWatch,
   useFormState as _useFormState,
   useFieldArray as _useFieldArray,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useEffect, useContext, createContext, useState } from 'react';
 
 import type {
   FieldPath,
@@ -15,33 +15,11 @@ import type {
   UseWatchProps,
   UseFormStateProps,
 } from 'react-hook-form';
+import type { z } from 'zod';
 
-type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
-
-// TODO
-// type FormFieldComponent =
-//   | ((props: { name: string; register: UseFormRegister<any> }) => JSX.Element)
-//   | ((props: { name: string; control: Control<any> }) => JSX.Element);
+type ContextInjectedFieldPropKey = 'name' | 'value' | 'onChange' | 'error';
 
 type FormFieldComponent = (props: any) => JSX.Element;
-
-const getStringyfiedNestedAttribute = <TReturn extends any = any>(
-  obj: Record<string, any>,
-  getterString: string
-) => {
-  const attributesArray = getterString.split('.');
-
-  const getter = (inner: unknown, pathAttributes: string[]): any => {
-    if (!pathAttributes.length) return inner;
-    if (typeof inner !== 'object' || inner === null) return undefined;
-    const nextPath = pathAttributes.shift() ?? '';
-    if (!(nextPath in inner)) return undefined;
-    // @ts-expect-error
-    return getter(inner[nextPath], pathAttributes);
-  };
-
-  return getter(obj, attributesArray) as TReturn;
-};
 
 type WrapperLayer = <
   TCtx,
@@ -161,34 +139,45 @@ const createForm = <TSchema extends ValidSchema>({
   const withFieldContext = <TWrappedFormField extends FormFieldComponent>(
     WrappedFormField: TWrappedFormField
   ) => {
-    type FormFieldUniqueProps = Omit<
+    type OmittedProps = Omit<
       React.ComponentPropsWithoutRef<TWrappedFormField>,
-      ContextInjectedFieldPropKey
+      'value' | 'error'
     >;
+
     return <TNoStrict extends boolean = false>(
       remainingProps: {
-        [K in keyof FormFieldUniqueProps]: K extends 'name'
+        [K in keyof OmittedProps | 'name']: K extends 'name'
           ? TNoStrict extends false
             ? FieldPath<InferedSchema>
             : string
-          : FormFieldUniqueProps[K];
+          : (OmittedProps & { name: string })[K];
       } & {
         noStrict?: TNoStrict;
       }
     ) => {
-      const {
-        control,
-        register,
-        formState: { errors },
-      } = useFormContext();
+      const { control } = useFormContext();
 
       return (
-        // @ts-expect-error
-        <WrappedFormField
+        <Controller
+          // @ts-expect-error because of noStrict
+          name={remainingProps.name}
           control={control}
-          register={register}
-          error={getStringyfiedNestedAttribute(errors, remainingProps.name)}
-          {...remainingProps}
+          render={({
+            field: { onChange, value, ref },
+            fieldState: { error },
+          }) => (
+            // @ts-expect-error
+            <WrappedFormField
+              ref={ref}
+              value={value}
+              error={error}
+              {...remainingProps}
+              onChange={(...params: any[]) => {
+                onChange(...params);
+                remainingProps.onChange(...params);
+              }}
+            />
+          )}
         />
       );
     };

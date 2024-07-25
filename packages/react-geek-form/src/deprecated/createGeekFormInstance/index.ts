@@ -12,6 +12,10 @@ type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
 
 type FormFieldComponent = (props: any) => JSX.Element;
 
+/**
+ * @deprecated since version 1.0
+ * @remarks use createInstance instead.
+ */
 const createGeekFormInstance = <
   TFormFieldName extends string,
   TFormFieldComponent extends FormFieldComponent,
@@ -24,6 +28,9 @@ const createGeekFormInstance = <
 }: {
   readonly fieldComponents: TWrappedFormFields;
 }) => {
+  console.warn(
+    'createGeekFormInstance is deprecated. Use createInstance instead.'
+  );
   const cF = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
     zodSchema,
   }: {
