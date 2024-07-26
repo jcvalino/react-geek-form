@@ -58,16 +58,16 @@ const createInstance = <
         TNoStrict extends boolean = false,
         OmittedProps = Omit<
           React.ComponentPropsWithoutRef<FormField['component']>,
-          'value' | 'error'
-        >
+          'value' | 'error' | 'name'
+        > & { name: string }
       >(
         props: MakePropertyOptional<
           {
-            [K in keyof OmittedProps | 'name']: K extends 'name'
+            [K in keyof OmittedProps]: K extends 'name'
               ? TNoStrict extends false
                 ? FieldPath<InferedSchema>
                 : string
-              : (OmittedProps & { name: string })[K];
+              : OmittedProps[K];
           },
           // @ts-expect-error
           'onChange'

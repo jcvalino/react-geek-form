@@ -141,16 +141,16 @@ const createForm = <TSchema extends ValidSchema>({
   ) => {
     type OmittedProps = Omit<
       React.ComponentPropsWithoutRef<TWrappedFormField>,
-      'value' | 'error'
-    >;
+      'value' | 'error' | 'name'
+    > & { name: string };
 
     return <TNoStrict extends boolean = false>(
       remainingProps: {
-        [K in keyof OmittedProps | 'name']: K extends 'name'
+        [K in keyof OmittedProps]: K extends 'name'
           ? TNoStrict extends false
             ? FieldPath<InferedSchema>
             : string
-          : (OmittedProps & { name: string })[K];
+          : OmittedProps[K];
       } & {
         noStrict?: TNoStrict;
       }
