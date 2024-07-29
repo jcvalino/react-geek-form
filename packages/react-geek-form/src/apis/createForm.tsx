@@ -12,12 +12,16 @@ import type {
   FieldPath,
   UseFormProps,
   UseFormReturn,
-  UseWatchProps,
+  FieldPathValue,
+  FieldArrayPath,
+  FieldPathValues,
   UseFormStateProps,
+  UseFieldArrayProps,
+  UseFormStateReturn,
+  UseFieldArrayReturn,
+  DeepPartialSkipArrayKey,
 } from 'react-hook-form';
 import type { z } from 'zod';
-
-type ContextInjectedFieldPropKey = 'name' | 'value' | 'onChange' | 'error';
 
 type FormFieldComponent = (props: any) => JSX.Element;
 
@@ -59,18 +63,47 @@ const createForm = <TSchema extends ValidSchema>({
     return context;
   };
 
-  const useWatch = (props?: Omit<UseWatchProps<InferedSchema>, 'control'>) => {
+  function useWatch(props?: {
+    defaultValue?: DeepPartialSkipArrayKey<InferedSchema>;
+    disabled?: boolean;
+    exact?: boolean;
+  }): DeepPartialSkipArrayKey<InferedSchema>;
+
+  function useWatch<
+    TFieldName extends FieldPath<InferedSchema> = FieldPath<InferedSchema>
+  >(props: {
+    name: TFieldName;
+    defaultValue?: FieldPathValue<InferedSchema, TFieldName>;
+    disabled?: boolean;
+    exact?: boolean;
+  }): FieldPathValue<InferedSchema, TFieldName>;
+
+  function useWatch<
+    TFieldNames extends readonly FieldPath<InferedSchema>[] = readonly FieldPath<InferedSchema>[]
+  >(props: {
+    name: readonly [...TFieldNames];
+    defaultValue?: DeepPartialSkipArrayKey<InferedSchema>;
+    disabled?: boolean;
+    exact?: boolean;
+  }): FieldPathValues<InferedSchema, TFieldNames>;
+
+  function useWatch(props: any) {
     const { control } = useFormContext();
-    // @ts-expect-error
     return _useWatch({
       ...(props ?? {}),
       control,
     });
-  };
+  }
 
-  const useFieldArray = (
-    props: Omit<Parameters<typeof _useFieldArray<InferedSchema>>[0], 'control'>
-  ) => {
+  const useFieldArray = <
+    TFieldArrayName extends FieldArrayPath<InferedSchema> = FieldArrayPath<InferedSchema>,
+    TKeyName extends string = 'id'
+  >(
+    props: Omit<
+      UseFieldArrayProps<InferedSchema, TFieldArrayName, TKeyName>,
+      'control'
+    >
+  ): UseFieldArrayReturn<InferedSchema, TFieldArrayName, TKeyName> => {
     const { control } = useFormContext();
     return _useFieldArray({
       ...props,
@@ -80,7 +113,7 @@ const createForm = <TSchema extends ValidSchema>({
 
   const useFormState = (
     props?: Omit<UseFormStateProps<InferedSchema>, 'control'>
-  ) => {
+  ): UseFormStateReturn<InferedSchema> => {
     const { control } = useFormContext();
     return _useFormState({
       ...(props ?? {}),
@@ -162,19 +195,18 @@ const createForm = <TSchema extends ValidSchema>({
           // @ts-expect-error because of noStrict
           name={remainingProps.name}
           control={control}
-          render={({
-            field: { onChange, value, ref },
-            fieldState: { error },
-          }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             // @ts-expect-error
             <WrappedFormField
-              ref={ref}
-              value={value}
+              // TODO: find a solution to check if a component is wrapped by forwardRef
+              // {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
+              value={value ?? ''}
               error={error}
               {...remainingProps}
               onChange={(...params: any[]) => {
                 onChange(...params);
-                remainingProps.onChange(...params);
+                if (typeof remainingProps.onChange === 'function')
+                  remainingProps.onChange(...params);
               }}
             />
           )}

@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import React from 'react';
 import { type FieldPath } from 'react-hook-form';
+import React, { type ForwardRefExoticComponent } from 'react';
 
 import type {
   UnionToArray,
@@ -13,7 +13,7 @@ type FormFieldComponent = (props: any) => JSX.Element;
 
 const createInstance = <
   const TWrappedFormFields extends {
-    [fieldName: string]: FormFieldComponent;
+    [fieldName: string]: FormFieldComponent | ForwardRefExoticComponent<any>;
   },
   TWrappedFormFieldArray = UnionToArray<
     {
@@ -57,7 +57,7 @@ const createInstance = <
         : never]: <
         TNoStrict extends boolean = false,
         OmittedProps = Omit<
-          React.ComponentPropsWithoutRef<FormField['component']>,
+          React.ComponentProps<FormField['component']>,
           'value' | 'error' | 'name'
         > & { name: string }
       >(
