@@ -37,7 +37,7 @@ type WrapperLayer = <
 const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
   component(props, ctx);
 
-type ValidSchema = z.ZodObject<any> | z.ZodEffects<any>;
+type ValidSchema = z.ZodObject<any> | z.ZodEffects<any> | z.ZodRecord<any>;
 
 const createForm = <TSchema extends ValidSchema>({
   zodSchema,

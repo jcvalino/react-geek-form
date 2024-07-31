@@ -37,7 +37,9 @@ const createInstance = <
       : never;
   }
 ) => {
-  const cF = <TSchema extends z.ZodObject<any> | z.ZodEffects<any>>({
+  const cF = <
+    TSchema extends z.ZodObject<any> | z.ZodEffects<any> | z.ZodRecord<any>
+  >({
     zodSchema,
   }: {
     zodSchema: TSchema;
