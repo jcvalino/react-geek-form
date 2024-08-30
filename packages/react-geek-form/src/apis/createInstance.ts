@@ -1,13 +1,13 @@
-import { z } from 'zod';
-import { type FieldPath } from 'react-hook-form';
-import React, { type ForwardRefExoticComponent } from 'react';
+import { z } from "zod";
+import { type FieldPath } from "react-hook-form";
+import React, { type ForwardRefExoticComponent } from "react";
 
 import type {
   UnionToArray,
   MakePropertyOptional,
   FindErrorFieldIndexes,
-} from '../utils';
-import createForm from './createForm';
+} from "../utils";
+import createForm, { type ValidSchema } from "./createForm";
 
 type FormFieldComponent = (props: any) => JSX.Element;
 
@@ -29,17 +29,15 @@ const createInstance = <
   fieldComponents: TWrappedFormFields & {
     [K in keyof (TErrorFieldIndexes extends never
       ? { errorFields?: any }
-      : { errorFields: any }) as K extends 'errorFields'
+      : { errorFields: any }) as K extends "errorFields"
       ? K
       : never]: TErrorFieldIndexes extends number
       ? // @ts-expect-error
-        TWrappedFormFieldArray[TErrorFieldIndexes]['name']
+        TWrappedFormFieldArray[TErrorFieldIndexes]["name"]
       : never;
   }
 ) => {
-  const cF = <
-    TSchema extends z.ZodObject<any> | z.ZodEffects<any> | z.ZodRecord<any>
-  >({
+  const cF = <TSchema extends ValidSchema>({
     zodSchema,
   }: {
     zodSchema: TSchema;
@@ -55,24 +53,24 @@ const createInstance = <
 
     type RegisteredFields = {
       [FormField in RegisteredFieldsEntries[keyof RegisteredFieldsEntries] as FormField extends any
-        ? FormField['name']
+        ? FormField["name"]
         : never]: <
         TNoStrict extends boolean = false,
         OmittedProps = Omit<
-          React.ComponentProps<FormField['component']>,
-          'value' | 'error' | 'name'
+          React.ComponentProps<FormField["component"]>,
+          "value" | "error" | "name"
         > & { name: string }
       >(
         props: MakePropertyOptional<
           {
-            [K in keyof OmittedProps]: K extends 'name'
+            [K in keyof OmittedProps]: K extends "name"
               ? TNoStrict extends false
                 ? FieldPath<InferedSchema>
                 : string
               : OmittedProps[K];
           },
           // @ts-expect-error
-          'onChange'
+          "onChange"
         > & {
           noStrict?: TNoStrict;
         }

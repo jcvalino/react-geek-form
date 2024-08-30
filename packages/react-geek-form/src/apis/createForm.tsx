@@ -4,9 +4,9 @@ import {
   useWatch as _useWatch,
   useFormState as _useFormState,
   useFieldArray as _useFieldArray,
-} from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useContext, createContext, useState } from 'react';
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useEffect, useContext, createContext, useState } from "react";
 
 import type {
   FieldPath,
@@ -20,8 +20,8 @@ import type {
   UseFormStateReturn,
   UseFieldArrayReturn,
   DeepPartialSkipArrayKey,
-} from 'react-hook-form';
-import type { z } from 'zod';
+} from "react-hook-form";
+import type { z } from "zod";
 
 type FormFieldComponent = (props: any) => JSX.Element;
 
@@ -37,7 +37,7 @@ type WrapperLayer = <
 const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
   component(props, ctx);
 
-type ValidSchema = z.ZodObject<any> | z.ZodEffects<any> | z.ZodRecord<any>;
+export type ValidSchema = z.Schema<any, any>;
 
 const createForm = <TSchema extends ValidSchema>({
   zodSchema,
@@ -97,11 +97,11 @@ const createForm = <TSchema extends ValidSchema>({
 
   const useFieldArray = <
     TFieldArrayName extends FieldArrayPath<InferedSchema> = FieldArrayPath<InferedSchema>,
-    TKeyName extends string = 'id'
+    TKeyName extends string = "id"
   >(
     props: Omit<
       UseFieldArrayProps<InferedSchema, TFieldArrayName, TKeyName>,
-      'control'
+      "control"
     >
   ): UseFieldArrayReturn<InferedSchema, TFieldArrayName, TKeyName> => {
     const { control } = useFormContext();
@@ -112,7 +112,7 @@ const createForm = <TSchema extends ValidSchema>({
   };
 
   const useFormState = (
-    props?: Omit<UseFormStateProps<InferedSchema>, 'control'>
+    props?: Omit<UseFormStateProps<InferedSchema>, "control">
   ): UseFormStateReturn<InferedSchema> => {
     const { control } = useFormContext();
     return _useFormState({
@@ -174,12 +174,12 @@ const createForm = <TSchema extends ValidSchema>({
   ) => {
     type OmittedProps = Omit<
       React.ComponentPropsWithoutRef<TWrappedFormField>,
-      'value' | 'error' | 'name'
+      "value" | "error" | "name"
     > & { name: string };
 
     return <TNoStrict extends boolean = false>(
       remainingProps: {
-        [K in keyof OmittedProps]: K extends 'name'
+        [K in keyof OmittedProps]: K extends "name"
           ? TNoStrict extends false
             ? FieldPath<InferedSchema>
             : string
@@ -200,12 +200,12 @@ const createForm = <TSchema extends ValidSchema>({
             <WrappedFormField
               // TODO: find a solution to check if a component is wrapped by forwardRef
               // {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
-              value={value ?? ''}
+              value={value ?? ""}
               error={error}
               {...remainingProps}
               onChange={(...params: any[]) => {
                 onChange(...params);
-                if (typeof remainingProps.onChange === 'function')
+                if (typeof remainingProps.onChange === "function")
                   remainingProps.onChange(...params);
               }}
             />
