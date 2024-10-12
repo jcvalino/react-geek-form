@@ -2,7 +2,13 @@
 import twContainerQueries from '@tailwindcss/container-queries';
 
 export default {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  darkMode: 'selector',
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
   theme: {
     extend: {
       colors: {
@@ -96,6 +102,54 @@ export default {
         'white-900': 'var(--white-900)',
         'white-1000': 'var(--white-1000)',
         'white-1100': 'var(--white-1100)',
+
+        icon: {
+          DEFAULT: 'var(--black-800)',
+          inverse: 'var(--white-200)',
+          subtle: 'var(--white-1100)',
+          disabled: 'var(--white-700)',
+          brand: 'var(--brand-700)',
+          info: 'var(--blue-700)',
+          success: 'var(--green-600)',
+          warning: 'var(--yellow-600)',
+          danger: 'var(--red-700)',
+          light: 'var(--white-100)',
+          dark: 'var(--black-100)',
+
+          onSelected: {
+            DEFAULT: 'var(--white-50)',
+            subtle: 'var(--blue-600)',
+          },
+
+          onInverse: {
+            DEFAULT: 'var(--white-100)',
+          },
+
+          onBrand: {
+            DEFAULT: 'var(--white-50)',
+            subtle: 'var(--brand-700)',
+          },
+
+          onInfo: {
+            DEFAULT: 'var(--white-50)',
+            subtle: 'var(--blue-700)',
+          },
+
+          onSuccess: {
+            DEFAULT: 'var(--white-50)',
+            subtle: 'var(--green-700)',
+          },
+
+          onWarning: {
+            DEFAULT: 'var(--white-50)',
+            subtle: 'var(--yellow-700)',
+          },
+
+          onDanger: {
+            DEFAULT: 'var(--white-50)',
+            subtle: 'var(--red-700)',
+          },
+        },
       },
 
       opacity: {
@@ -108,88 +162,100 @@ export default {
       },
 
       backgroundColor: {
+        transparent: 'transparent',
+        surface: {
+          DEFAULT: 'var(--white-50)',
+          overlay: 'var(--white-100)',
+          raised: 'var(--white-100)',
+          sunken: 'var(--white-200)',
+        },
+
         interface: {
           DEFAULT: 'var(--white-100)',
-          selected: {
-            DEFAULT: 'var(--blue-400)',
-            subtle: 'var(--blue-50)',
-          },
+          subtle: 'var(--white-200)',
           active: 'var(--white-100)',
           hovered: 'var(--white-200)',
           disabled: 'var(--white-300)',
           light: 'var(--white-100)',
-          overlay: 'var(--alpha-40)',
+          overlay: 'var(--black-100) / var(--alpha-40)',
+
+          selected: {
+            DEFAULT: 'var(--blue-400)',
+            subtle: 'var(--blue-50)',
+          },
         },
+
+        inverse: {
+          DEFAULT: 'var(--black-500)',
+          hovered: 'var(--black-600)',
+          active: 'var(--black-400)',
+        },
+
+        brand: {
+          DEFAULT: 'var(--brand-700)',
+          hovered: 'var(--brand-800)',
+          active: 'var(--brand-900)',
+
+          subtle: {
+            DEFAULT: 'var(--brand-50)',
+            hovered: 'var(--brand-100)',
+            active: 'var(--brand-200)',
+          },
+        },
+
+        info: {
+          DEFAULT: 'var(--blue-700)',
+          hovered: 'var(--blue-800)',
+          active: 'var(--blue-900)',
+
+          subtle: {
+            DEFAULT: 'var(--blue-50)',
+            hovered: 'var(--blue-100)',
+            active: 'var(--blue-200)',
+          },
+        },
+
+        success: {
+          DEFAULT: 'var(--green-600)',
+          hovered: 'var(--green-700)',
+          active: 'var(--green-800)',
+
+          subtle: {
+            DEFAULT: 'var(--green-50)',
+            hovered: 'var(--green-100)',
+            active: 'var(--green-200)',
+          },
+        },
+
+        warning: {
+          DEFAULT: 'var(--yellow-600)',
+          hovered: 'var(--yellow-500)',
+          active: 'var(--yellow-700)',
+
+          subtle: {
+            DEFAULT: 'var(--yellow-50)',
+            hovered: 'var(--yellow-100)',
+            active: 'var(--yellow-200)',
+          },
+        },
+
+        danger: {
+          DEFAULT: 'var(--red-600)',
+          hovered: 'var(--red-500)',
+          active: 'var(--red-700)',
+
+          subtle: {
+            DEFAULT: 'var(--red-50)',
+            hovered: 'var(--red-100)',
+            active: 'var(--red-200)',
+          },
+        },
+
         status: {
           neutral: 'var(--white-400)',
           success: 'var(--green-400)',
           warning: 'var(--yellow-400)',
           danger: 'var(--red-600)',
-        },
-        inverse: {
-          DEFAULT: 'var(--black-500)',
-          hovered: 'var(--black-600)',
-          pressed: 'var(--black-400)',
-        },
-        brand: {
-          DEFAULT: 'var(--brand-700)',
-          hovered: {
-            DEFAULT: 'var(--brand-800)',
-            subtle: 'var(--brand-100)',
-          },
-          pressed: {
-            DEFAULT: 'var(--brand-900)',
-            subtle: 'var(--brand-200)',
-          },
-          subtle: 'var(--brand-50)',
-        },
-        info: {
-          DEFAULT: 'var(--blue-700)',
-          hovered: {
-            DEFAULT: 'var(--blue-800)',
-            subtle: 'var(--blue-100)',
-          },
-          pressed: {
-            DEFAULT: 'var(--blue-900)',
-            subtle: 'var(--blue-200)',
-          },
-          subtle: 'var(--blue-50)',
-        },
-        success: {
-          DEFAULT: 'var(--green-600)',
-          hovered: {
-            DEFAULT: 'var(--green-700)',
-            subtle: 'var(--green-100)',
-          },
-          pressed: {
-            DEFAULT: 'var(--green-800)',
-            subtle: 'var(--green-200)',
-          },
-          subtle: 'var(--green-50)',
-        },
-        warning: {
-          DEFAULT: 'var(--yellow-600)',
-          hovered: {
-            DEFAULT: 'var(--yellow-500)',
-            subtle: 'var(--yellow-100)',
-          },
-          pressed: {
-            DEFAULT: 'var(--yellow-700)',
-            subtle: 'var(--yellow-200)',
-          },
-          subtle: 'var(--yellow-50)',
-        },
-        danger: {
-          DEFAULT: 'var(--red-600)',
-          hovered: {
-            DEFAULT: 'var(--red-500)',
-            subtle: 'var(--red-100)',
-          },
-          pressed: {
-            DEFAULT: 'var(--red-700)',
-            subtle: 'var(--red-200)',
-          },
-          subtle: 'var(--red-50)',
         },
       },
 
@@ -247,7 +313,7 @@ export default {
         subtle: 'var(--white-300)',
         selected: 'var(--brand-600)',
         inverse: 'var(--black-400)',
-        light: 'var(--brand-100)',
+        light: 'var(--white-100)',
 
         brand: {
           DEFAULT: 'var(--brand-600)',
@@ -276,6 +342,7 @@ export default {
       },
 
       outlineColor: {
+        // Start Border Color Tokens
         DEFAULT: 'var(--white-400)',
         subtle: 'var(--white-300)',
         selected: 'var(--brand-600)',
@@ -306,14 +373,16 @@ export default {
           DEFAULT: 'var(--red-400)',
           subtle: 'var(--red-500)',
         },
+        // End
       },
 
       ringColor: {
+        // Start border color tokens
         DEFAULT: 'var(--white-400)',
         subtle: 'var(--white-300)',
         selected: 'var(--brand-600)',
         inverse: 'var(--black-400)',
-        light: 'var(--brand-100)',
+        light: 'var(--white-100)',
 
         brand: {
           DEFAULT: 'var(--brand-600)',
@@ -339,38 +408,23 @@ export default {
           DEFAULT: 'var(--red-400)',
           subtle: 'var(--red-500)',
         },
+        // End
+
+        interface: {
+          focus: 'var(--ring-interface-focus)',
+        },
       },
 
-      spacing: {
-        none: 'var(--spacing-0)',
-        '2px': 'var(--spacing-2)',
-        '4px': 'var(--spacing-4)',
-        '6px': 'var(--spacing-6)',
-        '8px': 'var(--spacing-8)',
-        '10px': 'var(--spacing-10)',
-        '12px': 'var(--spacing-12)',
-        '14px': 'var(--spacing-14)',
-        '16px': 'var(--spacing-16)',
-        '18px': 'var(--spacing-18)',
-        '20px': 'var(--spacing-20)',
-        '24px': 'var(--spacing-24)',
-        '28px': 'var(--spacing-28)',
-        '32px': 'var(--spacing-32)',
-        '40px': 'var(--spacing-40)',
-        '60px': 'var(--spacing-60)',
-      },
-
-      borderRadius: {
-        none: 'var(--corner-none)',
-        '2px': 'var(--corner-2px)',
-        '4px': 'var(--corner-4px)',
-        '6px': 'var(--corner-6px)',
-        '8px': 'var(--corner-8px)',
-        '10px': 'var(--corner-10px)',
-        '12px': 'var(--corner-12px)',
-        '16px': 'var(--corner-16px)',
-        '24px': 'var(--corner-24px)',
-        full: 'var(--corner-rounded)',
+      boxShadow: {
+        'button-hover': '0px 0px 12px 2px var(--shadow-button-hover)',
+        'surface-raised': '0px 4px 8px 0px var(--shadow-surface-raised)',
+        'surface-raised-right': '4px 0px 8px 0px var(--shadow-surface-raised)',
+        'surface-raised-left': '-4px 0px 8px 0px var(--shadow-surface-raised)',
+        'surface-overlay': '0px 4px 12px 0px var(--shadow-surface-overlay)',
+        'surface-overlay-right':
+          '4px 0px 12px 0px var(--shadow-surface-overlay)',
+        'surface-overlay-left':
+          '-4px 0px 12px 0px var(--shadow-surface-overlay)',
       },
 
       fontFamily: {
@@ -379,123 +433,52 @@ export default {
       },
 
       fontSize: {
-        display: [
-          'var(--font-size-display)',
-          {
-            lineHeight: 'var(--leading-display)',
-          },
-        ],
-
-        title: [
-          'var(--font-size-title)',
-          {
-            lineHeight: 'var(--leading-title)',
-          },
-        ],
-
-        heading: [
-          'var(--font-size-heading)',
-          {
-            lineHeight: 'var(--leading-heading)',
-          },
-        ],
-
+        display: ['var(--font-size-display)', 'var(--leading-display)'],
+        title: ['var(--font-size-title)', 'var(--leading-title)'],
+        heading: ['var(--font-size-heading)', 'var(--leading-heading)'],
         subheading: [
           'var(--font-size-subheading)',
-          {
-            lineHeight: 'var(--leading-subheading)',
-          },
+          'var(--leading-subheading)',
         ],
+        lead: ['var(--font-size-lead)', 'var(--leading-lead)'],
 
-        lead: [
-          'var(--font-size-lead)',
-          {
-            lineHeight: 'var(--leading-lead)',
-          },
-        ],
-
-        body: [
-          'var(--font-size-body)',
-          {
-            lineHeight: 'var(--leading-body)',
-          },
-        ],
-
-        'body-tight': [
-          'var(--font-size-body)',
-          {
-            lineHeight: 'var(--leading-body-tight)',
-          },
-        ],
-
+        body: ['var(--font-size-body)', 'var(--leading-body)'],
+        'body-tight': ['var(--font-size-body)', 'var(--leading-body-tight)'],
         'body-relaxed': [
           'var(--font-size-body)',
-          {
-            lineHeight: 'var(--leading-body-relaxed)',
-          },
+          'var(--leading-body-relaxed)',
         ],
-
-        'body-loose': [
-          'var(--font-size-body)',
-          {
-            lineHeight: 'var(--leading-body-loose)',
-          },
-        ],
+        'body-loose': ['var(--font-size-body)', 'var(--leading-body-loose)'],
 
         'body-large': [
           'var(--font-size-body-large)',
-          {
-            lineHeight: 'var(--leading-body-large)',
-          },
+          'var(--leading-body-large)',
         ],
-
         'body-large-tight': [
           'var(--font-size-body-large)',
-          {
-            lineHeight: 'var(--leading-body-large-tight)',
-          },
+          'var(--leading-body-large-tight)',
         ],
-
         'body-large-relaxed': [
           'var(--font-size-body-large)',
-          {
-            lineHeight: 'var(--leading-body-large-relaxed)',
-          },
+          'var(--leading-body-large-relaxed)',
         ],
-
         'body-large-loose': [
           'var(--font-size-body-large)',
-          {
-            lineHeight: 'var(--leading-body-large-loose)',
-          },
+          'var(--leading-body-large-loose)',
         ],
 
-        caption: [
-          'var(--font-size-caption)',
-          {
-            lineHeight: 'var(--leading-caption)',
-          },
-        ],
-
+        caption: ['var(--font-size-caption)', 'var(--leading-caption)'],
         'caption-tight': [
           'var(--font-size-caption)',
-          {
-            lineHeight: 'var(--leading-caption-tight)',
-          },
+          'var(--leading-caption-tight)',
         ],
-
         'caption-relaxed': [
           'var(--font-size-caption)',
-          {
-            lineHeight: 'var(--leading-caption-relaxed)',
-          },
+          'var(--leading-caption-relaxed)',
         ],
-
         'caption-loose': [
           'var(--font-size-caption)',
-          {
-            lineHeight: 'var(--leading-caption-loose)',
-          },
+          'var(--leading-caption-loose)',
         ],
       },
     },
