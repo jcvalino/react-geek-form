@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/utilities.ts","./src/vite-env.d.ts","./src/components/button.tsx","./src/components/formfieldwrapper.tsx","./src/components/forminput.tsx","./src/components/formpassword.tsx","./src/components/formtextarea.tsx","./src/components/text.tsx","./src/helpers/index.ts"],"version":"5.6.3"}
