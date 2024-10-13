@@ -1,0 +1,44 @@
+---
+title: createInstance - Implementation
+description: Use the createInstance function to create a createForm instance. You only need to call this once in your application
+---
+
+import { Aside, Code } from "@astrojs/starlight/components";
+
+import implementationCode from "./implementation.txt?raw";
+import customInputCode from "./custominput.txt?raw";
+
+Since **<a href="/api/create-instance-setup#register-custom-field-components">createForm</a>** is exported, you can reuse it across your application in any form by simply importing it and creating the form components.
+
+Now, using createForm, define your Zod schema and render the form using forwardFormContext with your custom components.
+
+### Define Form Schema and Render Form
+
+<Code code={implementationCode} lang="ts" title="App.tsx" mark={["Invalid"]} />
+
+### What is the ctx object?
+
+<Aside type="note" title="Todo">
+  Explain the ctx object further
+</Aside>
+
+### Other createForm returns
+
+<Aside type="note" title="Todo">
+```tsx
+const {
+  forwardFormContext,
+  useWatch,
+  useFormState,
+  useFieldArray,
+  useFormContext,
+  ...Registered Custom Field Components
+} = createForm({
+  zodSchema: z.object({...})
+});
+```
+- useWatch
+- useFieldArray
+- useFormState
+- useFormContext
+</Aside>

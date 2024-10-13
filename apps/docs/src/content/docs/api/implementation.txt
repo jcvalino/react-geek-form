@@ -1,0 +1,34 @@
+import { z } from 'zod';
+import { createForm } from './helpers'; // Import your createForm(the one that is returned by createInstance)
+
+const { forwardFormContext, CustomInput, CustomTextarea } = createForm({
+  // Define form schema with Zod
+  zodSchema: z.object({
+    first_name: z.string(),
+    middle_name: z.string(),
+    last_name: z.string(),
+    bio: z.string(),
+  }),
+});
+
+// To render the form
+// Wrap your form component with forwardFormContext.
+// The component will received a second parameter (ctx) -
+// making the react-hook-form's methods like handleSubmit, watch, etc., accessible within your form.
+const App = forwardFormContext((_, ctx) => {
+  return (
+    <form onSubmit={ctx.handleSubmit((values) => console.log(values))}>
+      // The returned `Custom Field Components` from createForm are type-safe based on the zodSchema provided.
+      // The name prop will only accept values defined in the Zod schema.
+      // Now the Usage of CustomInput and CustomTextarea component will be like as below.
+      <CustomInput name="first_name" /> {/* Valid */}
+      <CustomInput name="middle_name" /> {/* Valid */}
+      <CustomInput name="last_name" /> {/* Valid */}
+      <CustomInput name="address" /> {/* Invalid; Type error: 'address' is not in the schema */}
+      <CustomTextarea name="bio" /> {/* Valid */}
+      <button type="submit">Submit</button>
+    </form>
+  );
+});
+
+export default App;
