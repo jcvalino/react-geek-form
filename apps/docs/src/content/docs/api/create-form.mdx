@@ -1,9 +1,16 @@
 ---
 title: createForm
-description: A reference page in my new Starlight docs site.
+description: Deprecated
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="caution">
+As of v1.0.0 This feature is now deprecated.
+
+Please use the `createForm` method that is returned from [`createInstance`](/api/create-instance-implementation)
+
+</Aside>
 
 A utility that creates a closure that encapsulates all the functionality of `react-hook-form`'s `useForm` hook and `zod` .
 

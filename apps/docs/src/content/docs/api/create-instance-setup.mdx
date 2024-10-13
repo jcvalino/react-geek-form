@@ -1,0 +1,43 @@
+---
+title: createInstance - Setup
+description: Use the createInstance function to create a createForm instance. You only need to call this once in your application
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+import helperCode from "./helper.txt?raw";
+import customInputCode from "./custominput.txt?raw";
+
+To use the library, first create an instance of your form components using the createInstance method. You only need to do this once for your entire application. The instance will be configured with the custom components you define.
+
+### Register Custom Field Components
+
+<Code code={helperCode} lang="ts" title="helpers.ts" mark={["createForm"]} />
+
+### Creating Custom Field Components
+
+To register a custom field component, ensure that it meets the following criteria:
+
+- Must have a value prop.
+
+```dts
+value: any;
+```
+
+- Must have an onChange prop defined as follows:
+
+```tsx
+onChange: (value: any) => void;
+```
+
+- An optional error prop may be included. If defined, it must adhere to this structure:
+
+```tsx
+error: {
+  message: string;
+}
+```
+
+#### Example Custom Field Component
+
+<Code code={customInputCode} lang="tsx" title="CustomInput.tsx" />
