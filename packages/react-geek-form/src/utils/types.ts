@@ -1,4 +1,4 @@
-import type { ErrorOption, FieldError } from 'react-hook-form';
+import type { ComponentProps } from "react";
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   k: infer I
@@ -32,39 +32,64 @@ export type MakePropertyOptional<T, K extends keyof T> = Omit<T, K> & {
   [P in K]?: T[P];
 };
 
-type MandatoryFieldProps = {
-  name?: string;
-  value: any;
-  onChange: (value: any) => void;
-  error?: FieldError | ErrorOption;
-};
-
 type FormField = {
   name: any;
   component: (props: any) => JSX.Element;
 };
 
+type MandatoryFieldProps = {
+  value: {};
+  onChange: (value: any) => void;
+  error?: {
+    message: string;
+  };
+};
+
+type AnyOfThisExtendsUndefined<TThis> = undefined extends TThis ? true : false;
+type GetObjectFieldValue<
+  TObj,
+  TKey extends keyof TObj
+> = TKey extends keyof TObj ? TObj[TKey] : undefined;
+
+type AnyOfThisExtendsThat<TThis, TThat> = Extract<TThis, TThat> extends never
+  ? AnyOfThisExtendsUndefined<TThat> extends true
+    ? AnyOfThisExtendsUndefined<TThis>
+    : false
+  : undefined extends TThis
+  ? Extract<Exclude<TThis, undefined>, Exclude<TThat, undefined>> extends never
+    ? TThis extends undefined
+      ? true
+      : false
+    : true
+  : true;
+
+type AnyOfThisObjExtendsThatObj<TThisObj, TThatObj> = {
+  [K in keyof TThatObj]-?: AnyOfThisExtendsThat<
+    // @ts-expect-error
+    GetObjectFieldValue<TThisObj, K>,
+    TThatObj[K]
+  >;
+}[keyof TThatObj];
+
 export type FindErrorFieldIndexes<
   TFormFields extends any[],
   TErrorFieldIndexes extends number = never
-> = IsOneOfIndexesExtends<
-  UnionToArray<
-    TFormFields extends [...any, infer RField]
-      ? RField extends FormField
-        ? Parameters<RField['component']>[0]
-        : never
+> = AnyOfThisObjExtendsThatObj<
+  TFormFields extends [...any, infer RField]
+    ? RField extends FormField
+      ? ComponentProps<RField["component"]>
       : never
-  >,
+    : never,
   MandatoryFieldProps
 > extends true
   ? TFormFields extends [...infer TFormFieldsFrontRest, any]
     ? FindErrorFieldIndexes<TFormFieldsFrontRest, TErrorFieldIndexes>
     : TErrorFieldIndexes
   : TFormFields extends [...infer TFormFieldsFrontRest, any]
-  ? TFormFieldsFrontRest['length'] extends 0
-    ? TErrorFieldIndexes | TFormFieldsFrontRest['length']
+  ? TFormFieldsFrontRest["length"] extends 0
+    ? TErrorFieldIndexes | TFormFieldsFrontRest["length"]
     : FindErrorFieldIndexes<
         TFormFieldsFrontRest,
-        TErrorFieldIndexes | TFormFieldsFrontRest['length']
+        TErrorFieldIndexes | TFormFieldsFrontRest["length"]
       >
   : never;

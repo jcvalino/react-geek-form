@@ -127,7 +127,7 @@ const createForm = <TSchema extends ValidSchema>({
     WrappedComponent: TWrappedComponent
   ) => {
     return (
-      props: React.ComponentPropsWithoutRef<TWrappedComponent> & {
+      props: Parameters<TWrappedComponent>[0] & {
         onInitializedFormContext?: (ctx: Ctx) => void;
       }
     ) => {
