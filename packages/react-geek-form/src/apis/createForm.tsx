@@ -1,12 +1,20 @@
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  createContext,
+} from "react";
 import {
   useForm,
   Controller,
   useWatch as _useWatch,
   useFormState as _useFormState,
   useFieldArray as _useFieldArray,
+  type DefaultValues,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useContext, createContext, useState } from "react";
 
 import type {
   FieldPath,
@@ -39,19 +47,24 @@ const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
 
 export type ValidSchema = z.Schema<any, any>;
 
+type CreateFormProps<TSchema> = {
+  zodSchema: TSchema;
+  mode?: UseFormProps["mode"];
+};
 const createForm = <TSchema extends ValidSchema>({
   zodSchema,
-}: {
-  zodSchema: TSchema;
-}) => {
+  mode,
+}: CreateFormProps<TSchema>) => {
   type InferedSchema = z.infer<TSchema>;
   type UseFormConfigs = UseFormProps<InferedSchema>;
 
   type Ctx = UseFormReturn<InferedSchema> & {
+    /** @deprecated This method will be removed in a future release. */
     setFormConfigs: (props: UseFormConfigs) => void;
     setZodSchema: (
       schema: ValidSchema | ((schema: TSchema) => ValidSchema)
     ) => void;
+    useSetDefaultValues: (values: DefaultValues<InferedSchema>) => void;
   };
 
   const FormContext = createContext<null | Ctx>(null);
@@ -131,25 +144,41 @@ const createForm = <TSchema extends ValidSchema>({
         onInitializedFormContext?: (ctx: Ctx) => void;
       }
     ) => {
+      const [isRendered, setIsRendered] = useState(false);
       const [_zodSchema, _setZodSchema] = useState<ValidSchema>(zodSchema);
-      const [_formConfigs, _setFormConfigs] = useState<UseFormConfigs | null>(
-        null
-      );
+
+      const [_formConfigs, _setFormConfigs] = useState<UseFormConfigs | null>({
+        mode,
+      });
 
       const form = useForm({
         resolver: zodResolver(_zodSchema),
-        ...(_formConfigs ?? {}),
+        ..._formConfigs,
       }) as Ctx;
 
       // @ts-expect-error
       form.setZodSchema = _setZodSchema;
-      form.setFormConfigs = _setFormConfigs;
+
+      form.setFormConfigs = useCallback(
+        (configs: Parameters<typeof _setFormConfigs>[0]) => {
+          console.warn(
+            "@deprecated 'setFormConfigs' This method will be removed in a future release."
+          );
+          _setFormConfigs((prev) => ({ ...prev, ...configs }));
+        },
+        [_setFormConfigs]
+      );
+
+      form.useSetDefaultValues = (defaultValues) => {
+        const defaultValuesRef = useRef(defaultValues);
+        useEffect(() => {
+          form.reset(defaultValuesRef.current);
+        }, [form.reset]);
+      };
 
       useEffect(() => {
         props.onInitializedFormContext?.(form);
       }, [form, props]);
-
-      const [isRendered, setIsRendered] = useState(false);
 
       useEffect(() => {
         setIsRendered(true);
@@ -168,6 +197,9 @@ const createForm = <TSchema extends ValidSchema>({
       );
     };
   };
+
+  const isWrappedByForwardRef = (component: FormFieldComponent) =>
+    typeof component === "object" && "$$typeof" in component;
 
   const withFieldContext = <TWrappedFormField extends FormFieldComponent>(
     WrappedFormField: TWrappedFormField
@@ -195,11 +227,14 @@ const createForm = <TSchema extends ValidSchema>({
           // @ts-expect-error because of noStrict
           name={remainingProps.name}
           control={control}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
+          render={({
+            field: { onChange, value, ref },
+            fieldState: { error },
+          }) => (
             // @ts-expect-error
             <WrappedFormField
               // TODO: find a solution to check if a component is wrapped by forwardRef
-              // {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
+              {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
               value={value ?? ""}
               error={error}
               {...remainingProps}

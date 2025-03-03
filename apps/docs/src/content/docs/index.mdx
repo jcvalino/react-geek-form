@@ -25,6 +25,10 @@ import {
   Card,
   CardGrid,
 } from "@astrojs/starlight/components";
+import { Image } from "astro:assets";
+import geekformSampleImage from "../../assets/images/sample-geekform.png";
+import hookformSampleImage from "../../assets/images/sample-hookform.png";
+import formikSampleImage from "../../assets/images/sample-formik.png";
 
 import AboutContent from "./_contents/AboutSection.tsx";
 
@@ -32,13 +36,13 @@ import AboutContent from "./_contents/AboutSection.tsx";
   <AboutContent client:load />
   <Tabs>
     <TabItem label="react-geek-form" icon="seti:mustache">
-      <img src="https://i.ibb.co/mt7BR2B/App-tsx-3.png" />
+      <Image alt="react-geek-form" src={geekformSampleImage} />
     </TabItem>
     <TabItem label="react-hook-form">
-      <img src="https://i.ibb.co/Nr907Tb/App-tsx-1.png" />
+      <Image alt="react-hook-form" src={hookformSampleImage} />
     </TabItem>
     <TabItem label="formik">
-      <img src="https://i.ibb.co/7CB5fM8/App-tsx-2.png" />
+      <Image alt="formik" src={formikSampleImage} />
     </TabItem>
   </Tabs>
 </CardGrid>

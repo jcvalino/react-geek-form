@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { type FieldPath } from "react-hook-form";
 import React, { type ForwardRefExoticComponent } from "react";
+import type { UseFormProps, FieldPath } from "react-hook-form";
 
 import type {
-  UnionToArray,
   MakePropertyOptional,
-  FindErrorFieldIndexes,
+  // UnionToArray,
+  // FindErrorFieldIndexes,
 } from "../utils";
 import createForm, { type ValidSchema } from "./createForm";
 
@@ -14,36 +14,40 @@ type FormFieldComponent = (props: any) => JSX.Element;
 const createInstance = <
   const TWrappedFormFields extends {
     [fieldName: string]: FormFieldComponent | ForwardRefExoticComponent<any>;
-  },
-  TWrappedFormFieldArray = UnionToArray<
-    {
-      [FieldName in keyof TWrappedFormFields]: {
-        name: FieldName;
-        component: TWrappedFormFields[FieldName];
-      };
-    }[keyof TWrappedFormFields]
-  >,
-  // @ts-expect-error
-  TErrorFieldIndexes = FindErrorFieldIndexes<TWrappedFormFieldArray>
->(
-  fieldComponents: TWrappedFormFields & {
-    [K in keyof (TErrorFieldIndexes extends never
-      ? { errorFields?: any }
-      : { errorFields: any }) as K extends "errorFields"
-      ? K
-      : never]: TErrorFieldIndexes extends number
-      ? // @ts-expect-error
-        TWrappedFormFieldArray[TErrorFieldIndexes]["name"]
-      : never;
   }
+  // TWrappedFormFieldArray = UnionToArray<
+  //   {
+  //     [FieldName in keyof TWrappedFormFields]: {
+  //       name: FieldName;
+  //       component: TWrappedFormFields[FieldName];
+  //     };
+  //   }[keyof TWrappedFormFields]
+  // >,
+  //// @ts-expect-error
+  // TErrorFieldIndexes = FindErrorFieldIndexes<TWrappedFormFieldArray>
+>(
+  fieldComponents: TWrappedFormFields
+  // & {
+  //   [K in keyof (TErrorFieldIndexes extends never
+  //     ? { errorFields?: any }
+  //     : { errorFields: any }) as K extends "errorFields"
+  //     ? K
+  //     : never]: TErrorFieldIndexes extends number
+  //     ? // @ts-expect-error
+  //       TWrappedFormFieldArray[TErrorFieldIndexes]["name"]
+  //     : never;
+  // }
 ) => {
+  type CreateFormProps<TSchema> = {
+    zodSchema: TSchema;
+    mode?: UseFormProps["mode"];
+  };
   const cF = <TSchema extends ValidSchema>({
     zodSchema,
-  }: {
-    zodSchema: TSchema;
-  }) => {
+    mode,
+  }: CreateFormProps<TSchema>) => {
     type InferedSchema = z.infer<TSchema>;
-    const form = createForm({ zodSchema });
+    const form = createForm({ zodSchema, mode });
     type RegisteredFieldsEntries = {
       [FormFieldName in keyof TWrappedFormFields]: {
         name: FormFieldName;
