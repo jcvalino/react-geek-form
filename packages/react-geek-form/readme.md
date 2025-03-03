@@ -1,6 +1,6 @@
 <div align="center">
 
-<a target="_blank" href="https://react-geek-form-docs.vercel.app">
+<a target="_blank" href="https://react-geek-form.com">
   <img width="200px" alt="React Geek Form Documentation" src="https://i.ibb.co/wSb3Mgb/react-geek-form.png" />
 </a>
 
