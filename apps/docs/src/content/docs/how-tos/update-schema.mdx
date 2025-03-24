@@ -1,0 +1,23 @@
+---
+title: How To - Update Schema
+description: Lorem ipsum
+---
+
+If you want to set or update the schema based on the data from API.
+
+```tsx
+const App = forwardFormContext((_, ctx) => {
+
+  useEffect(() => {
+    ctx.setZodSchema((prevSchema) => {
+      // read the zod docs here: https://zod.dev/
+      // to learn how to modify the existing schema
+      return newSchema
+    });
+  }, [ctx])
+
+  return (
+   ...
+  )
+});
+```
