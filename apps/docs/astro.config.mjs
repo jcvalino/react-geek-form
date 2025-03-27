@@ -9,7 +9,7 @@ export default defineConfig({
   integrations: [
     react(),
     starlight({
-      favicon: "./src/assets/favicon.ico",
+      favicon: "./public/favicon.ico",
       title: "",
       logo: {
         src: "./src/assets/icon.svg",
@@ -62,6 +62,19 @@ export default defineConfig({
               //   text: "Deprecated",
               //   variant: "caution",
               // },
+            },
+          ],
+        },
+        {
+          label: "How-Tos",
+          items: [
+            {
+              label: "Set Default Values",
+              link: "/how-tos/set-default-values",
+            },
+            {
+              label: "Update Schema",
+              link: "/how-tos/update-schema",
             },
           ],
         },

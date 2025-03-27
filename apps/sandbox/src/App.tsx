@@ -15,7 +15,16 @@ const { forwardFormContext, FormInput, FormPassword, FormTextArea } =
       password: z.string().min(1, "Required"),
     }),
   });
+
 const ExampleForm = forwardFormContext((_, ctx) => {
+  ctx.useSetDefaultValues({
+    email: "juandelacruz@gmail.com",
+    password: "",
+    last_name: "",
+    first_name: "",
+    middle_name: "",
+  });
+
   return (
     <form
       className="w-full max-w-[30rem] h-max p-4 border rounded-xl bg-white"
@@ -42,6 +51,17 @@ const ExampleForm = forwardFormContext((_, ctx) => {
       <Button intent="success" variant="outline" className="mt-2 w-full">
         Submit
       </Button>
+      <div className="grid grid-cols-3 gap-4">
+        <Button
+          type="button"
+          className="mt-2 w-full"
+          onClick={() => {
+            ctx.setFocus("email");
+          }}
+        >
+          Focus Email
+        </Button>
+      </div>
     </form>
   );
 });

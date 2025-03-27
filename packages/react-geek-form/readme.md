@@ -15,8 +15,8 @@
 </div>
 
 <p align="center">
-  <a target="_blank" href="https://react-geek-form-docs.vercel.app/getting-started/quickstart">Getting Started</a> | 
-  <a target="_blank" href="https://react-geek-form-docs.vercel.app/api/create-instance-setup">API's</a> |
+  <a target="_blank" href="https://react-geek-form.com/getting-started/quickstart">Getting Started</a> | 
+  <a target="_blank" href="https://react-geek-form.com/api/create-instance-setup">API's</a> |
   <a target="_blank" href="#">Integrations</a> |
   <a target="_blank" href="#">Migrations</a>
 </p>
