@@ -47,6 +47,17 @@ const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
 
 export type ValidSchema = z.Schema<any, any>;
 
+export type ctx<TSchema extends ValidSchema> = UseFormReturn<
+  z.infer<TSchema>
+> & {
+  /** @deprecated This method will be removed in a future release. */
+  setFormConfigs: (props: UseFormProps<z.infer<TSchema>>) => void;
+  setZodSchema: (
+    schema: ValidSchema | ((schema: TSchema) => ValidSchema)
+  ) => void;
+  useSetDefaultValues: (values: DefaultValues<z.infer<TSchema>>) => void;
+};
+
 type CreateFormProps<TSchema> = {
   zodSchema: TSchema;
   mode?: UseFormProps["mode"];
@@ -58,14 +69,16 @@ const createForm = <TSchema extends ValidSchema>({
   type InferedSchema = z.infer<TSchema>;
   type UseFormConfigs = UseFormProps<InferedSchema>;
 
-  type Ctx = UseFormReturn<InferedSchema> & {
-    /** @deprecated This method will be removed in a future release. */
-    setFormConfigs: (props: UseFormConfigs) => void;
-    setZodSchema: (
-      schema: ValidSchema | ((schema: TSchema) => ValidSchema)
-    ) => void;
-    useSetDefaultValues: (values: DefaultValues<InferedSchema>) => void;
-  };
+  type Ctx = ctx<TSchema>;
+
+  // type Ctx = UseFormReturn<InferedSchema> & {
+  //   /** @deprecated This method will be removed in a future release. */
+  //   setFormConfigs: (props: UseFormConfigs) => void;
+  //   setZodSchema: (
+  //     schema: ValidSchema | ((schema: TSchema) => ValidSchema)
+  //   ) => void;
+  //   useSetDefaultValues: (values: DefaultValues<InferedSchema>) => void;
+  // };
 
   const FormContext = createContext<null | Ctx>(null);
 
