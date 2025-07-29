@@ -48,6 +48,7 @@ const createInstance = <
   }: CreateFormProps<TSchema>) => {
     type InferedSchema = z.infer<TSchema>;
     const form = createForm({ zodSchema, mode });
+
     type RegisteredFieldsEntries = {
       [FormFieldName in keyof TWrappedFormFields]: {
         name: FormFieldName;
@@ -58,27 +59,31 @@ const createInstance = <
     type RegisteredFields = {
       [FormField in RegisteredFieldsEntries[keyof RegisteredFieldsEntries] as FormField extends any
         ? FormField["name"]
-        : never]: <
-        TNoStrict extends boolean = false,
-        OmittedProps = Omit<
-          React.ComponentProps<FormField["component"]>,
-          "value" | "error" | "name"
-        > & { name: string }
-      >(
-        props: MakePropertyOptional<
-          {
-            [K in keyof OmittedProps]: K extends "name"
-              ? TNoStrict extends false
-                ? FieldPath<InferedSchema>
-                : string
-              : OmittedProps[K];
-          },
-          // @ts-expect-error
-          "onChange"
-        > & {
-          noStrict?: TNoStrict;
-        }
-      ) => JSX.Element;
+        : never]: {
+        <
+          TNoStrict extends boolean = false,
+          OmittedProps = Omit<
+            React.ComponentProps<FormField["component"]>,
+            "value" | "error" | "name"
+          > & { name: string }
+        >(
+          props: MakePropertyOptional<
+            {
+              [K in keyof OmittedProps]: K extends "name"
+                ? TNoStrict extends false
+                  ? FieldPath<InferedSchema>
+                  : string
+                : OmittedProps[K];
+            },
+            // @ts-expect-error
+            "onChange"
+          > & {
+            noStrict?: TNoStrict;
+          }
+        ): JSX.Element;
+      } & {
+        [K in keyof FormField["component"]]: FormField["component"][K];
+      };
     };
 
     const registeredFields = Object.keys(fieldComponents)
@@ -89,6 +94,11 @@ const createInstance = <
       .reduce<RegisteredFields>((fields, field) => {
         // @ts-expect-error
         fields[field.name] = form.withFieldContext(field.component);
+        const customAttributesKeys = Object.keys(field.component);
+        customAttributesKeys.forEach((key) => {
+          // @ts-expect-error
+          fields[field.name][key] = field.component[key];
+        });
         return fields;
       }, {} as any);
 

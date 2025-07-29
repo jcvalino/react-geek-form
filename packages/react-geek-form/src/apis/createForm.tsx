@@ -47,6 +47,17 @@ const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
 
 export type ValidSchema = z.Schema<any, any>;
 
+export type ctx<TSchema extends ValidSchema> = UseFormReturn<
+  z.infer<TSchema>
+> & {
+  /** @deprecated This method will be removed in a future release. */
+  setFormConfigs: (props: UseFormProps<z.infer<TSchema>>) => void;
+  setZodSchema: (
+    schema: ValidSchema | ((schema: TSchema) => ValidSchema)
+  ) => void;
+  useSetDefaultValues: (values: DefaultValues<z.infer<TSchema>>) => void;
+};
+
 type CreateFormProps<TSchema> = {
   zodSchema: TSchema;
   mode?: UseFormProps["mode"];
@@ -58,14 +69,16 @@ const createForm = <TSchema extends ValidSchema>({
   type InferedSchema = z.infer<TSchema>;
   type UseFormConfigs = UseFormProps<InferedSchema>;
 
-  type Ctx = UseFormReturn<InferedSchema> & {
-    /** @deprecated This method will be removed in a future release. */
-    setFormConfigs: (props: UseFormConfigs) => void;
-    setZodSchema: (
-      schema: ValidSchema | ((schema: TSchema) => ValidSchema)
-    ) => void;
-    useSetDefaultValues: (values: DefaultValues<InferedSchema>) => void;
-  };
+  type Ctx = ctx<TSchema>;
+
+  // type Ctx = UseFormReturn<InferedSchema> & {
+  //   /** @deprecated This method will be removed in a future release. */
+  //   setFormConfigs: (props: UseFormConfigs) => void;
+  //   setZodSchema: (
+  //     schema: ValidSchema | ((schema: TSchema) => ValidSchema)
+  //   ) => void;
+  //   useSetDefaultValues: (values: DefaultValues<InferedSchema>) => void;
+  // };
 
   const FormContext = createContext<null | Ctx>(null);
 
@@ -134,20 +147,20 @@ const createForm = <TSchema extends ValidSchema>({
     });
   };
 
-  const forwardFormContext = <
-    TWrappedComponent extends (props: any, ctx: Ctx) => JSX.Element
-  >(
-    WrappedComponent: TWrappedComponent
+  const forwardFormContext = <TWrappedComponentProps = {},>(
+    WrappedComponent: (props: TWrappedComponentProps, ctx: Ctx) => JSX.Element
   ) => {
     return (
-      props: Parameters<TWrappedComponent>[0] & {
+      props: TWrappedComponentProps & {
         onInitializedFormContext?: (ctx: Ctx) => void;
+        defaultGeekValues?: DefaultValues<InferedSchema>;
       }
     ) => {
       const [isRendered, setIsRendered] = useState(false);
       const [_zodSchema, _setZodSchema] = useState<ValidSchema>(zodSchema);
 
       const [_formConfigs, _setFormConfigs] = useState<UseFormConfigs | null>({
+        defaultValues: props.defaultGeekValues,
         mode,
       });
 
@@ -235,7 +248,7 @@ const createForm = <TSchema extends ValidSchema>({
             <WrappedFormField
               // TODO: find a solution to check if a component is wrapped by forwardRef
               {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
-              value={value ?? ""}
+              value={value ?? undefined}
               error={error}
               {...remainingProps}
               onChange={(...params: any[]) => {

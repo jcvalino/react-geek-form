@@ -3,9 +3,9 @@ import {
   useWatch as _useWatch,
   useFormState as _useFormState,
   useFieldArray as _useFieldArray,
-} from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useContext, createContext, useState } from 'react';
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useEffect, useContext, createContext, useState } from "react";
 
 import type {
   FieldPath,
@@ -13,11 +13,11 @@ import type {
   UseFormReturn,
   UseWatchProps,
   UseFormStateProps,
-} from 'react-hook-form';
-import type { z } from 'zod';
-import { getStringyfiedNestedAttribute } from '../../utils';
+} from "react-hook-form";
+import type { z } from "zod";
+import { getStringyfiedNestedAttribute } from "../../utils";
 
-type ContextInjectedFieldPropKey = 'register' | 'control' | 'error';
+type ContextInjectedFieldPropKey = "register" | "control" | "error";
 
 // TODO
 // type FormFieldComponent =
@@ -49,7 +49,7 @@ const createForm = <TSchema extends ValidSchema>({
 }: {
   zodSchema: TSchema;
 }) => {
-  console.warn('createForm is deprecated. Use createInstance instead.');
+  console.warn("createForm is deprecated. Use createInstance instead.");
   type InferedSchema = z.infer<TSchema>;
   type UseFormConfigs = UseFormProps<InferedSchema>;
 
@@ -69,17 +69,17 @@ const createForm = <TSchema extends ValidSchema>({
     return context;
   };
 
-  const useWatch = (props?: Omit<UseWatchProps<InferedSchema>, 'control'>) => {
+  const useWatch = (props?: Omit<UseWatchProps<InferedSchema>, "control">) => {
     const { control } = useFormContext();
-    // @ts-expect-error
     return _useWatch({
       ...(props ?? {}),
+      // @ts-expect-error
       control,
     });
   };
 
   const useFieldArray = (
-    props: Omit<Parameters<typeof _useFieldArray<InferedSchema>>[0], 'control'>
+    props: Omit<Parameters<typeof _useFieldArray<InferedSchema>>[0], "control">
   ) => {
     const { control } = useFormContext();
     return _useFieldArray({
@@ -89,7 +89,7 @@ const createForm = <TSchema extends ValidSchema>({
   };
 
   const useFormState = (
-    props?: Omit<UseFormStateProps<InferedSchema>, 'control'>
+    props?: Omit<UseFormStateProps<InferedSchema>, "control">
   ) => {
     const { control } = useFormContext();
     return _useFormState({
@@ -155,7 +155,7 @@ const createForm = <TSchema extends ValidSchema>({
     >;
     return <TNoStrict extends boolean = false>(
       remainingProps: {
-        [K in keyof FormFieldUniqueProps]: K extends 'name'
+        [K in keyof FormFieldUniqueProps]: K extends "name"
           ? TNoStrict extends false
             ? FieldPath<InferedSchema>
             : string

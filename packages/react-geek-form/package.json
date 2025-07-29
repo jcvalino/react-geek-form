@@ -1,6 +1,6 @@
 {
   "name": "react-geek-form",
-  "version": "1.1.4",
+  "version": "1.2.0-beta.1",
   "description": "A react.js form library built on top of react-hook-form and zod",
   "scripts": {
     "build": "rollup -c",
@@ -16,10 +16,6 @@
     "url": "https://github.com/jcvalino/react-geek-form/issues"
   },
   "homepage": "https://github.com/jcvalino/react-geek-form#readme",
-  "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
-    "react-hook-form": "^7.52.1"
-  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-node-resolve": "^15.2.1",
@@ -48,5 +44,9 @@
     "form-validation",
     "validation",
     "typescript"
-  ]
+  ],
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.0",
+    "react-hook-form": "^7.61.1"
+  }
 }
