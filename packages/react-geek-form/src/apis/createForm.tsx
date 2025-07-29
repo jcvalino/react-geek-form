@@ -147,20 +147,20 @@ const createForm = <TSchema extends ValidSchema>({
     });
   };
 
-  const forwardFormContext = <
-    TWrappedComponent extends (props: any, ctx: Ctx) => JSX.Element
-  >(
-    WrappedComponent: TWrappedComponent
+  const forwardFormContext = <TWrappedComponentProps = {},>(
+    WrappedComponent: (props: TWrappedComponentProps, ctx: Ctx) => JSX.Element
   ) => {
     return (
-      props: Parameters<TWrappedComponent>[0] & {
+      props: TWrappedComponentProps & {
         onInitializedFormContext?: (ctx: Ctx) => void;
+        defaultGeekValues?: DefaultValues<InferedSchema>;
       }
     ) => {
       const [isRendered, setIsRendered] = useState(false);
       const [_zodSchema, _setZodSchema] = useState<ValidSchema>(zodSchema);
 
       const [_formConfigs, _setFormConfigs] = useState<UseFormConfigs | null>({
+        defaultValues: props.defaultGeekValues,
         mode,
       });
 
@@ -248,7 +248,7 @@ const createForm = <TSchema extends ValidSchema>({
             <WrappedFormField
               // TODO: find a solution to check if a component is wrapped by forwardRef
               {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
-              value={value ?? ""}
+              value={value ?? undefined}
               error={error}
               {...remainingProps}
               onChange={(...params: any[]) => {
