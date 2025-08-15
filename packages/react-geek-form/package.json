@@ -1,6 +1,6 @@
 {
   "name": "react-geek-form",
-  "version": "1.2.0-beta.1",
+  "version": "1.2.0",
   "description": "A react.js form library built on top of react-hook-form and zod",
   "scripts": {
     "build": "rollup -c",
@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "zod": "^3.22.2"
+    "zod": "^3.22.2 || ^4.0.0"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
