@@ -248,7 +248,9 @@ const createForm = <TSchema extends ValidSchema>({
             <WrappedFormField
               // TODO: find a solution to check if a component is wrapped by forwardRef
               {...(isWrappedByForwardRef(WrappedFormField) ? { ref } : {})}
-              value={value ?? undefined}
+              value={value ?? ""}
+              // Note: Will be implemented in the next major version
+              // value={value ?? undefined}
               error={error}
               {...remainingProps}
               onChange={(...params: any[]) => {
