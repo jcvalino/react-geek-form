@@ -7,110 +7,82 @@ import type {
   // UnionToArray,
   // FindErrorFieldIndexes,
 } from "../utils";
+import type {
+  FieldComponentMap,
+  FieldRegistrar,
+  FieldRegistrarBuilder,
+  CreateFormFactory,
+  RegisteredFields,
+} from "../utils/builderTypes";
 import createForm, { type ValidSchema } from "./createForm";
 
 type FormFieldComponent = (props: any) => JSX.Element;
 
-const createInstance = <
-  const TWrappedFormFields extends {
-    [fieldName: string]: FormFieldComponent | ForwardRefExoticComponent<any>;
-  }
-  // TWrappedFormFieldArray = UnionToArray<
-  //   {
-  //     [FieldName in keyof TWrappedFormFields]: {
-  //       name: FieldName;
-  //       component: TWrappedFormFields[FieldName];
-  //     };
-  //   }[keyof TWrappedFormFields]
-  // >,
-  //// @ts-expect-error
-  // TErrorFieldIndexes = FindErrorFieldIndexes<TWrappedFormFieldArray>
->(
-  fieldComponents: TWrappedFormFields
-  // & {
-  //   [K in keyof (TErrorFieldIndexes extends never
-  //     ? { errorFields?: any }
-  //     : { errorFields: any }) as K extends "errorFields"
-  //     ? K
-  //     : never]: TErrorFieldIndexes extends number
-  //     ? // @ts-expect-error
-  //       TWrappedFormFieldArray[TErrorFieldIndexes]["name"]
-  //     : never;
-  // }
-) => {
-  type CreateFormProps<TSchema> = {
-    zodSchema: TSchema;
-    mode?: UseFormProps["mode"];
-  };
-  const cF = <TSchema extends ValidSchema>({
+/**
+ * Internal function to build the createForm factory with registered fields
+ */
+function buildCreateForm<CM extends FieldComponentMap>(
+  fieldComponents: CM
+): CreateFormFactory<CM> {
+  return function createFormFactory<TSchema extends ValidSchema>({
     zodSchema,
     mode,
-  }: CreateFormProps<TSchema>) => {
+  }: {
+    zodSchema: TSchema;
+    mode?: UseFormProps["mode"];
+  }) {
     type InferedSchema = z.infer<TSchema>;
     const form = createForm({ zodSchema, mode });
 
-    type RegisteredFieldsEntries = {
-      [FormFieldName in keyof TWrappedFormFields]: {
-        name: FormFieldName;
-        component: TWrappedFormFields[FormFieldName];
-      };
-    };
+    // Build registered fields object using the extracted type
+    type CurrentRegisteredFields = RegisteredFields<CM, TSchema>;
 
-    type RegisteredFields = {
-      [FormField in RegisteredFieldsEntries[keyof RegisteredFieldsEntries] as FormField extends any
-        ? FormField["name"]
-        : never]: {
-        <
-          TNoStrict extends boolean = false,
-          OmittedProps = Omit<
-            React.ComponentProps<FormField["component"]>,
-            "value" | "error" | "name"
-          > & { name: string }
-        >(
-          props: MakePropertyOptional<
-            {
-              [K in keyof OmittedProps]: K extends "name"
-                ? TNoStrict extends false
-                  ? FieldPath<InferedSchema>
-                  : string
-                : OmittedProps[K];
-            },
-            // @ts-expect-error
-            "onChange"
-          > & {
-            noStrict?: TNoStrict;
-          }
-        ): JSX.Element;
-      } & {
-        [K in keyof FormField["component"]]: FormField["component"][K];
-      };
-    };
-
-    const registeredFields = Object.keys(fieldComponents)
-      .map((fieldName) => ({
-        name: fieldName,
-        component: fieldComponents[fieldName],
-      }))
-      .reduce<RegisteredFields>((fields, field) => {
-        // @ts-expect-error
-        fields[field.name] = form.withFieldContext(field.component);
-        const customAttributesKeys = Object.keys(field.component);
-        customAttributesKeys.forEach((key) => {
-          // @ts-expect-error
-          fields[field.name][key] = field.component[key];
-        });
+    const registeredFields = Object.keys(fieldComponents).reduce(
+      (fields, fieldName) => {
+        const component = fieldComponents[fieldName as keyof CM];
+        const wrappedComponent = form.withFieldContext(component as any);
+        
+        // Copy static properties from original component
+        Object.assign(wrappedComponent, component);
+        
+        (fields as any)[fieldName] = wrappedComponent;
         return fields;
-      }, {} as any);
+      },
+      {} as CurrentRegisteredFields
+    );
 
     return {
       ...form,
       ...registeredFields,
-    };
+    } as any;
   };
+}
 
+// Overload 1: Legacy API - pass components directly
+export function createInstance<CM extends FieldComponentMap>(
+  fieldComponents: CM
+): FieldRegistrar<CM>;
+
+// Overload 2: Builder API - no arguments, returns builder
+export function createInstance(): FieldRegistrarBuilder;
+
+// Implementation
+export function createInstance<CM extends FieldComponentMap>(
+  fieldComponents?: CM
+): FieldRegistrar<CM> | FieldRegistrarBuilder {
+  if (fieldComponents) {
+    // Legacy API: return createForm factory directly
+    return {
+      createForm: buildCreateForm(fieldComponents),
+    };
+  }
+  
+  // Builder API: return builder with withFields method
   return {
-    createForm: cF,
+    withFields: <NewCM extends FieldComponentMap>(components: NewCM) => ({
+      createForm: buildCreateForm(components),
+    }),
   };
-};
+}
 
 export default createInstance;

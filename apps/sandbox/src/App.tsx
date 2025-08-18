@@ -88,7 +88,7 @@ const ExampleForm = forwardFormContext((_: { onClose?: () => void }, ctx) => {
       <hr />
 
       <Button
-        type="button"
+        type="submit"
         intent="success"
         variant="outline"
         className="mt-2 w-full"
@@ -112,13 +112,8 @@ const ExampleForm = forwardFormContext((_: { onClose?: () => void }, ctx) => {
 
 function App() {
   return (
-    <main className="p-4 grid place-items-center h-screen bg-green-100">
+    <main className="p-4 grid place-items-center h-screen bg-green-100 overflow-auto">
       <ExampleForm
-
-
-
-
-
 
       // defaultGeekValues={{
       //   email: 'juandelacruz@gmail.com',
