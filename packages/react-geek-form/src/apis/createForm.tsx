@@ -14,6 +14,7 @@ import {
   useFieldArray as _useFieldArray,
   type DefaultValues,
 } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type {
@@ -29,7 +30,6 @@ import type {
   UseFieldArrayReturn,
   DeepPartialSkipArrayKey,
 } from "react-hook-form";
-import type { z } from "zod";
 
 type FormFieldComponent = (props: any) => JSX.Element;
 
@@ -45,16 +45,20 @@ type WrapperLayer = <
 const WrapperLayer: WrapperLayer = ({ component, props, ctx }) =>
   component(props, ctx);
 
-export type ValidSchema = z.Schema<any, any>;
+// export type ValidSchema = z4.ZodSchema | z3.Schema;
+export type ValidSchema = any;
 
 export type ctx<TSchema extends ValidSchema> = UseFormReturn<
+  // @ts-expect-error
   z.infer<TSchema>
 > & {
   /** @deprecated This method will be removed in a future release. */
+  // @ts-expect-error
   setFormConfigs: (props: UseFormProps<z.infer<TSchema>>) => void;
   setZodSchema: (
     schema: ValidSchema | ((schema: TSchema) => ValidSchema)
   ) => void;
+  // @ts-expect-error
   useSetDefaultValues: (values: DefaultValues<z.infer<TSchema>>) => void;
 };
 
@@ -66,7 +70,9 @@ const createForm = <TSchema extends ValidSchema>({
   zodSchema,
   mode,
 }: CreateFormProps<TSchema>) => {
+  // @ts-expect-error
   type InferedSchema = z.infer<TSchema>;
+  // @ts-expect-error
   type UseFormConfigs = UseFormProps<InferedSchema>;
 
   type Ctx = ctx<TSchema>;
@@ -95,22 +101,28 @@ const createForm = <TSchema extends ValidSchema>({
     exact?: boolean;
   }): DeepPartialSkipArrayKey<InferedSchema>;
 
+  // @ts-expect-error
   function useWatch<
+    // @ts-expect-error
     TFieldName extends FieldPath<InferedSchema> = FieldPath<InferedSchema>
   >(props: {
     name: TFieldName;
+    // @ts-expect-error
     defaultValue?: FieldPathValue<InferedSchema, TFieldName>;
     disabled?: boolean;
     exact?: boolean;
+    // @ts-expect-error
   }): FieldPathValue<InferedSchema, TFieldName>;
 
   function useWatch<
+    // @ts-expect-error
     TFieldNames extends readonly FieldPath<InferedSchema>[] = readonly FieldPath<InferedSchema>[]
   >(props: {
     name: readonly [...TFieldNames];
     defaultValue?: DeepPartialSkipArrayKey<InferedSchema>;
     disabled?: boolean;
     exact?: boolean;
+    // @ts-expect-error
   }): FieldPathValues<InferedSchema, TFieldNames>;
 
   function useWatch(props: any) {
@@ -122,27 +134,36 @@ const createForm = <TSchema extends ValidSchema>({
   }
 
   const useFieldArray = <
+    // @ts-expect-error
     TFieldArrayName extends FieldArrayPath<InferedSchema> = FieldArrayPath<InferedSchema>,
     TKeyName extends string = "id"
   >(
     props: Omit<
+      // @ts-expect-error
       UseFieldArrayProps<InferedSchema, TFieldArrayName, TKeyName>,
       "control"
     >
+    // @ts-expect-error
   ): UseFieldArrayReturn<InferedSchema, TFieldArrayName, TKeyName> => {
     const { control } = useFormContext();
+    // @ts-expect-error
     return _useFieldArray({
       ...props,
+      // @ts-expect-error
       control,
     });
   };
 
   const useFormState = (
+    // @ts-expect-error
     props?: Omit<UseFormStateProps<InferedSchema>, "control">
+    // @ts-expect-error
   ): UseFormStateReturn<InferedSchema> => {
     const { control } = useFormContext();
+    // @ts-expect-error
     return _useFormState({
       ...(props ?? {}),
+      // @ts-expect-error
       control,
     });
   };
@@ -164,12 +185,13 @@ const createForm = <TSchema extends ValidSchema>({
         mode,
       });
 
+      // @ts-expect-error
       const form = useForm({
+        // @ts-expect-error
         resolver: zodResolver(_zodSchema),
         ..._formConfigs,
       }) as Ctx;
 
-      // @ts-expect-error
       form.setZodSchema = _setZodSchema;
 
       form.setFormConfigs = useCallback(
@@ -226,7 +248,8 @@ const createForm = <TSchema extends ValidSchema>({
       remainingProps: {
         [K in keyof OmittedProps]: K extends "name"
           ? TNoStrict extends false
-            ? FieldPath<InferedSchema>
+            ? // @ts-expect-error
+              FieldPath<InferedSchema>
             : string
           : OmittedProps[K];
       } & {
@@ -237,8 +260,8 @@ const createForm = <TSchema extends ValidSchema>({
 
       return (
         <Controller
-          // @ts-expect-error because of noStrict
           name={remainingProps.name}
+          // @ts-expect-error
           control={control}
           render={({
             field: { onChange, value, ref },

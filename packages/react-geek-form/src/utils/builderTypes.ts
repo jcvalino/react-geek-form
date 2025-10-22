@@ -1,12 +1,14 @@
-import type { ComponentProps, ForwardRefExoticComponent } from "react";
+import z from "zod";
 import type { UseFormProps, FieldPath } from "react-hook-form";
-import type { ValidSchema } from "../apis/createForm";
+import type { ComponentProps, ForwardRefExoticComponent } from "react";
+
+import createForm, { type ValidSchema } from "../apis/createForm";
 
 /**
  * Map of field component names to their respective React components
  */
 export type FieldComponentMap = {
-  [fieldName: string]: 
+  [fieldName: string]:
     | ((props: any) => JSX.Element)
     | ForwardRefExoticComponent<any>;
 };
@@ -14,10 +16,7 @@ export type FieldComponentMap = {
 /**
  * Internal registry entry for a single field component
  */
-export type RegistryEntry<
-  CM extends FieldComponentMap,
-  K extends keyof CM
-> = {
+export type RegistryEntry<CM extends FieldComponentMap, K extends keyof CM> = {
   name: K;
   component: CM[K];
 };
@@ -33,16 +32,15 @@ export type RegisteredFields<
   [K in keyof CM]: {
     <
       TNoStrict extends boolean = false,
-      OmittedProps = Omit<
-        ComponentProps<CM[K]>,
-        "value" | "error" | "name"
-      > & { name: string }
+      OmittedProps = Omit<ComponentProps<CM[K]>, "value" | "error" | "name"> & {
+        name: string;
+      }
     >(
       props: import("./types").MakePropertyOptional<
         {
           [P in keyof OmittedProps]: P extends "name"
             ? TNoStrict extends false
-              ? FieldPath<import("zod").infer<Schema>>
+              ? FieldPath<z.infer<Schema>>
               : string
             : OmittedProps[P];
         },
@@ -64,8 +62,7 @@ export type CreateFormFactory<CM extends FieldComponentMap> = <
 >(cfg: {
   zodSchema: S;
   mode?: UseFormProps["mode"];
-}) => ReturnType<typeof import("../apis/createForm").default<S>> &
-  RegisteredFields<CM, S>;
+}) => ReturnType<typeof createForm<S>> & RegisteredFields<CM, S>;
 
 /**
  * Object returned by createInstance - contains the createForm factory
@@ -77,8 +74,8 @@ export type FieldRegistrar<CM extends FieldComponentMap> = {
 /**
  * Builder interface for chained API
  */
-export type FieldRegistrarBuilder = {
-  withFields: <CM extends FieldComponentMap>(
-    components: CM
-  ) => FieldRegistrar<CM>;
-};
+// export type FieldRegistrarBuilder = {
+//   withFields: <CM extends FieldComponentMap>(
+//     components: CM
+//   ) => FieldRegistrar<CM>;
+// };

@@ -1,21 +1,21 @@
-import { z } from 'zod';
+import { z as z4 } from 'zod/v4';
 
 import { createForm } from './helpers';
 
 import Button from './components/Button';
 import { useEffect } from 'react';
 
-const schema = z.object({
-  first_name: z.string().min(1, 'Required'),
-  middle_name: z.string().optional(),
-  last_name: z.string().min(1, 'Required'),
-  bio: z.string().min(1, 'Required'),
-  email: z.string().min(1, 'Required').email('Invalid'),
-  password: z.string().min(1, 'Required'),
-  is_restday: z.string().min(1, 'Required'),
-  hobbies: z.array(
-    z.object({
-      name: z.string(),
+const schema = z4.object({
+  first_name: z4.string().min(1, 'Required'),
+  middle_name: z4.string().optional(),
+  last_name: z4.string().min(1, 'Required'),
+  bio: z4.string().min(1, 'Required'),
+  email: z4.email('Invalid').min(1, 'Required'),
+  password: z4.string().min(1, 'Required'),
+  is_restday: z4.string().min(1, 'Required'),
+  hobbies: z4.array(
+    z4.object({
+      name: z4.string(),
     }),
   ),
 });
@@ -26,6 +26,9 @@ const {
   FormPassword,
   FormTextArea,
   RadioGroup,
+  // useFormContext,
+  // useFormState,
+  // withFieldContext,
   useWatch,
   useFieldArray,
 } = createForm({
@@ -114,7 +117,6 @@ function App() {
   return (
     <main className="p-4 grid place-items-center h-screen bg-green-100 overflow-auto">
       <ExampleForm
-
       // defaultGeekValues={{
       //   email: 'juandelacruz@gmail.com',
       //   hobbies: [{ name: 'Table-Tennis' }, { name: 'Beyblade X' }],
@@ -123,9 +125,5 @@ function App() {
     </main>
   );
 }
-
-// const Yow = () => <div></div>
-
-// type Test = Parameters<typeof Yow>[0]
 
 export default App;

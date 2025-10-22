@@ -14,14 +14,17 @@ const { createForm } = createInstance({
 });
 
 // Example 2: New Builder API (alternative usage)
-const { createForm: createFormBuilder } = createInstance().withFields({
-  FormInput,
-  FormPassword,
-  FormTextArea,
-  RadioGroup,
-});
+// const { createForm: createFormBuilder } = createInstance().withFields({
+//   FormInput,
+//   FormPassword,
+//   FormTextArea,
+//   RadioGroup,
+// });
 
 // Both approaches produce identical results
-console.log('Both APIs work:', { createForm, createFormBuilder });
+console.log('Both APIs work:', {
+  createForm,
+  // createFormBuilder
+});
 
 export { createForm };
